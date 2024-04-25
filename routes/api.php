@@ -22,4 +22,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 require __DIR__.'/auth.php';
 Route::get('/contacts',[ContactController::class,'getAllContacts']);
 Route::get('/reply-email/{id}',[ContactController::class,'getEmailById']);
+Route::post('/reply-email',[ContactController::class,'replyEmail']);
+
 
