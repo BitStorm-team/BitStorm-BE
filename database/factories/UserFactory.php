@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'gender' => $this->faker->randomElement(['male', 'female']),
             'role_id' => $this->faker->randomElement([2, 3]), // Randomly select role_id 2 or 3
             'remember_token' => Str::random(10),
-        ];
+        ];  
     }
 
     /**

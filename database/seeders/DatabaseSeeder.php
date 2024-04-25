@@ -18,17 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $role = new RolesSeeder();
-        for($i = 0; $i < 4; $i++){
-            $role->run();
-        }
         $this->call([
+            RolesSeeder::class,
             UsersSeeder::class,
-            ExpertDetailsSeeder::class,
-
+            ContactSeeder::class,
         ]);
-        // $user = new UsersSeeder();
-        // $user->run();
 
     }
 }

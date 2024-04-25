@@ -16,26 +16,27 @@ class UsersSeeder extends Seeder
      * @return void
      */
 
-     public function run()
-    {
-        // Thêm người dùng admin
-        $data = [
+     public static function run()
+        {
+            $data = [
             [
+                'role_id' => 1,
                 'name' => 'admin',
                 'email' => 'admin@gmail.com',
                 'email_verified_at' => now(),
-                'password' => Hash::make('admin@gmail.com'), // Băm mật khẩu
+                'password' => Hash::make('admin@gmail.com'),
                 'address' => '123 Main St',
                 'profile_picture' => 'profile.jpg',
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '1234567890',
                 'gender' => 'male',
-                'role_id' => 1,
+                'status' => 1,
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
+                'role_id' => 3,
                 'name' => "vanthu",
                 'email' => "vanthu@gmail.com",
                 'email_verified_at' => now(),
@@ -45,7 +46,6 @@ class UsersSeeder extends Seeder
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '0958494003',
                 'gender' => 'female',
-                'role_id' => 3,
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
