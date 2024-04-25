@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('role_id')->default(2);
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -24,7 +25,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('gender')->nullable();
-            $table->foreignId('role_id')->default(2); // Giá trị mặc định cho vai trò là 2 (User)
+            $table->boolean('status')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

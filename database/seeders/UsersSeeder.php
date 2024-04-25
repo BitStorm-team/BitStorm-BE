@@ -19,16 +19,17 @@ class UsersSeeder extends Seeder
      public static function run()
         {
             DB::table('users')->insert([
+                'role_id' => 1,
                 'name' => 'admin',
                 'email' => 'admin@gmail.com',
                 'email_verified_at' => now(),
-                'password' => 'admin@gmail.com',
+                'password' => Hash::make('admin@gmail.com'),
                 'address' => '123 Main St',
                 'profile_picture' => 'profile.jpg',
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '1234567890',
                 'gender' => 'male',
-                'role_id' => 1,
+                'status' => 1,
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),

@@ -16,18 +16,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $role = new RolesSeeder();
-        for($i = 0; $i < 4; $i++){
-            $role->run();
-        }
-
-        $user = new UsersSeeder();
-        $user->run();
-        $contact = new ContactSeeder();
-        $contact->run();
         $this->call([
             RolesSeeder::class,
-            UsersSeeder::class
+            UsersSeeder::class,
+            ContactSeeder::class,
         ]);
 
     }
