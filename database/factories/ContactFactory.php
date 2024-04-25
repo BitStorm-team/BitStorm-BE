@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Contact;
+use App\Models\User;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contact>
  */
@@ -16,9 +16,10 @@ class ContactFactory extends Factory
      */
     public function definition()
     {
+        $user = User::where('role_id', 2)->inRandomOrder()->firstOrFail();
         return [
             'content' => $this->faker->sentence,
-            'user_id' => \App\Models\User::factory()->create()->id,
+            'user_id' => $user->id,
         ];
     }
 }

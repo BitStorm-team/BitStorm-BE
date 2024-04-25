@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contacts', function (Blueprint $table) {
-            $table->id();
-            $table->text('content');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->boolean('status')->default(0);
+        Schema::create('expert_details', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->primary(); // user_id là khóa chính
+            $table->text('experience')->nullable();
+            $table->text('certificate')->nullable();
+            $table->decimal('average_rating', 2, 1)->default(0.0);
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contacts');
+        Schema::dropIfExists('expert_details');
     }
 };

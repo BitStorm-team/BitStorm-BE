@@ -18,10 +18,16 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => bcrypt('password'), // You may want to change this
+            'address' => $this->faker->address,
+            'profile_picture' => null,
+            'date_of_birth' => $this->faker->date(),
+            'phone_number' => $this->faker->phoneNumber,
+            'gender' => $this->faker->randomElement(['male', 'female']),
+            'role_id' => $this->faker->randomElement([2]), // Randomly select role_id 2 or 3
             'remember_token' => Str::random(10),
         ];  
     }
@@ -36,5 +42,13 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+    public function expert()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role_id' => 3, // Set role_id to 3 for expert
+            ];
+        });
     }
 }

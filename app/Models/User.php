@@ -56,6 +56,21 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+    public function experts()
+    {   
+        return $this->hasOne(ExpertDetail::class);
+    }
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($user) {
+            if ($user->role_id == 3) {
+                // Nếu người dùng có role_id = 3, cập nhật user_id trong bảng expert_details
+                ExpertDetail::updateOrCreate(['user_id' => $user->id], ['user_id' => $user->id]);
+            }
+        });
+    }
     public function contacts()
     {
         return $this->hasMany(Contact::class);
