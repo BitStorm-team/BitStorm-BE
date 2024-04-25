@@ -23,6 +23,12 @@ class DatabaseSeeder extends Seeder
 
         $user = new UsersSeeder();
         $user->run();
+        $contact = new ContactSeeder();
+        $contact->run();
+        $this->call([
+            RolesSeeder::class,
+            UsersSeeder::class
+        ]);
 
     }
 }
