@@ -46,11 +46,14 @@ class UsersSeeder extends Seeder
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '0958494003',
                 'gender' => 'female',
+                'status' => 1,
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
             ];
         DB::table('users')->insert($data);
+        User::factory()->count(10)->create();
+        User::factory()->expert()->count(10)->create();
     }
     }

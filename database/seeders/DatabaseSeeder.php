@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,
             UsersSeeder::class,
             ContactSeeder::class,
+            ExpertDetailsSeeder::class,
         ]);
 
     }

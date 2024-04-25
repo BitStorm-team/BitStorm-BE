@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'date_of_birth' => $this->faker->date(),
             'phone_number' => $this->faker->phoneNumber,
             'gender' => $this->faker->randomElement(['male', 'female']),
-            'role_id' => $this->faker->randomElement([2, 3]), // Randomly select role_id 2 or 3
+            'role_id' => $this->faker->randomElement([2]), // Randomly select role_id 2 or 3
             'remember_token' => Str::random(10),
         ];  
     }

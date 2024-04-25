@@ -3,9 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\ExpertDetailController;
-use App\Models\ExpertDetail;
 use App\Http\Controllers\ContactController;
 
 /*
