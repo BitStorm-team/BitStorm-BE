@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 // auth routes
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 // admin routes
 Route::prefix('admin')->group(function () {
@@ -31,6 +31,9 @@ Route::prefix('admin')->group(function () {
     Route::get('/expertdetail', [ExpertDetailController::class, 'index']);
     Route::get('/contacts', [ContactController::class, 'getAllContacts']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/reply-email/{id}',[ContactController::class,'getEmailById']);
+    Route::post('/reply-email',[ContactController::class,'replyEmail']);
+
 })->middleware('check.role.admin');
 
 
