@@ -17,7 +17,12 @@ class UserController extends Controller
     {
         //
         $users = User::all();
-        return response()->json($users);
+        return response()->json([
+            "Users" => $users,
+            "StatusCode" => 200,
+            "Message" => "Get all users successfully"
+        ]);
+
     }
 
     /**
@@ -72,7 +77,13 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->status = $request->input('status');
+        $user->save();
+        return response()->json([
+            'message' => 'User status updated successfully',
+            'user' => $user
+        ], 200);
     }
 
     /**

@@ -27,3 +27,4 @@ require __DIR__.'/auth.php';
 Route::get('/contacts',[ContactController::class,'getAllContacts']);
 
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
