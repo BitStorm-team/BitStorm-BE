@@ -17,10 +17,11 @@ class CheckRoleAdmin
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public static function handle(Request $request, Closure $next)
-    {   $user = Auth::user();
-        if(($user->role_id !== 1)){
-            return response()->json(['message' => 'Your account is not accept.'], 409);
-        }
+    {
+        // $user = Auth::user();
+        // if(($user->role_id !== 1)){
+        //     return response()->json(['message' => 'Your account is not accept.'], 409);
+        // }
         return $next($request);
     }
 }
