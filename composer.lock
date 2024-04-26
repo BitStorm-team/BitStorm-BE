@@ -9072,7 +9072,6 @@
             "time": "2023-01-03T19:28:04+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "symfony/yaml",
             "version": "v7.0.3",
             "source": {
@@ -9144,8 +9143,6 @@
             "time": "2024-01-23T15:02:46+00:00"
         },
         {
-=======
->>>>>>> bf1754c3ec19faa563f4fb38840600d771fb1334
             "name": "theseer/tokenizer",
             "version": "1.2.3",
             "source": {

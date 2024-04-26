@@ -22,8 +22,20 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/expertdetail',[ExpertDetailController::class,'index']);
-require __DIR__.'/auth.php';
-Route::get('/contacts',[ContactController::class,'getAllContacts']);
+// auth routes
+require __DIR__ . '/auth.php';
 
-Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+// admin routes
+Route::prefix('admin')->group(function () {
+
+    Route::get('/expertdetail', [ExpertDetailController::class, 'index']);
+    Route::get('/contacts', [ContactController::class, 'getAllContacts']);
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+})->middleware('check.role.admin');
+
+
+// expert routes
+Route::prefix('expert')->group(function () {
+
+    // code here
+})->middleware('check.role.expert');
