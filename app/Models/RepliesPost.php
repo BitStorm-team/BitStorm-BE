@@ -11,7 +11,7 @@ class RepliesPost extends Model
 
     public function comment()
     {
-        return $this->belongsTo(CommentsPost::class);
+        return $this->belongsTo(CommentsPost::class,'comment_post_id');
     }
 
     public function user()

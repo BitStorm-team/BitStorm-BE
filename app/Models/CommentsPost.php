@@ -20,7 +20,7 @@ class CommentsPost extends Model
 
     public function replies()
     {
-        return $this->hasMany(RepliesPost::class);
+        return $this->hasMany(RepliesPost::class,'comment_post_id');
     }
     protected static function boot()
     {

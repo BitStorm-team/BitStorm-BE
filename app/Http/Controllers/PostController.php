@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CommentsPost;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,12 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        // $posts = CommentsPost::with('replies')->get();
+        $posts = Post::with('user','comments.user','comments.replies.user')->get();
+        return response()->json([
+            'success' => true,
+            'data' => $posts,
+        ], 200);
     }
 
     /**
