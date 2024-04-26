@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::apiResource('posts',PostController::class);
 Route::get('/expertdetail',[ExpertDetailController::class,'index']);
 Route::get('/contacts',[ContactController::class,'getAllContacts']);
-
+Route::put('posts/update-status/{id}',[PostController::class,'updatePostStatus'])->name('admin.post.update.status');
 // admin routes
 Route::prefix('admin')->group(function () {
 

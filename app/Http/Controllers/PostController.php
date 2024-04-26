@@ -43,6 +43,13 @@ class PostController extends Controller
     public function show($postId)
     {
         $post = Post::with('user','comments.user','comments.replies.user')->find($postId);
+        if(empty($post)){
+            return response()->json([
+                'success' => false,
+                'message' => 'PostID not found',
+                'data'=> null,
+            ], 200);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Show post successfully!',
@@ -57,15 +64,21 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function updatePostStatus(Request $request,$id=0)
     {
         $post=Post::find($id);
+        if(empty($post)){
+            return response()->json([
+                'success' => false,
+                'message' => 'PostID not found',
+                'data'=> null,
+            ], 200);
+        }
         $newStatus = !($post->status);
         $post->update([
             'status' => $newStatus,
         ]);
 
-        // Trả về phản hồi thành công
         return response()->json([
             'success' => true,
             'message' => 'Updated status post successfully!',
