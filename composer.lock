@@ -286,8 +286,6 @@
             "time": "2022-10-27T11:44:00+00:00"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "doctrine/annotations",
             "version": "2.0.1",
             "source": {
@@ -411,7 +409,6 @@
             "time": "2024-01-30T19:34:25+00:00"
         },
         {
->>>>>>> bf1754c3ec19faa563f4fb38840600d771fb1334
             "name": "doctrine/inflector",
             "version": "2.0.10",
             "source": {
