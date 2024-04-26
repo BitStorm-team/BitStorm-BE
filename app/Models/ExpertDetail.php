@@ -17,5 +17,9 @@ class ExpertDetail extends Model
     {
         return $this->hasOne(User::class);
     }
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
 
 }
