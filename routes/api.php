@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +22,9 @@ use App\Http\Controllers\ContactController;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-
-// auth routes
-require __DIR__ . '/auth.php';
+Route::apiResource('posts',PostController::class);
+Route::get('/expertdetail',[ExpertDetailController::class,'index']);
+Route::get('/contacts',[ContactController::class,'getAllContacts']);
 
 // admin routes
 Route::prefix('admin')->group(function () {
@@ -37,3 +38,4 @@ Route::prefix('admin')->group(function () {
     Route::post('/reply-email', [ContactController::class, 'replyEmail']);
     
 });
+require __DIR__.'/auth.php';

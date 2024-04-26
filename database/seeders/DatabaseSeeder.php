@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\CommentsPost;
 use App\Models\ExpertDetail;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RolesSeeder;
@@ -23,6 +24,9 @@ class DatabaseSeeder extends Seeder
             UsersSeeder::class,
             ContactSeeder::class,
             ExpertDetailsSeeder::class,
+            PostSeeder::class,
+            CommentsPostSeeder::class,
+            RepliesPostSeeder::class,
         ]);
 
     }
