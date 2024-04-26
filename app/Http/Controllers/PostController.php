@@ -15,10 +15,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        // $posts = CommentsPost::with('replies')->get();
         $posts = Post::with('user','comments.user','comments.replies.user')->where('status',1)->get();
         return response()->json([
             'success' => true,
+            'message' => 'Show all posts successfully!',
             'data' => $posts,
         ], 200);
     }
@@ -40,9 +40,14 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($postId)
     {
-        //
+        $post = Post::with('user','comments.user','comments.replies.user')->find($postId);
+        return response()->json([
+            'success' => true,
+            'message' => 'Show post successfully!',
+            'data' => $post,
+        ], 200);
     }
 
     /**
@@ -52,9 +57,20 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request,$id)
     {
-        //
+        $post=Post::find($id);
+        $newStatus = !($post->status);
+        $post->update([
+            'status' => $newStatus,
+        ]);
+
+        // Trả về phản hồi thành công
+        return response()->json([
+            'success' => true,
+            'message' => 'Updated status post successfully!',
+            'data'=> $post,
+        ], 200);
     }
 
     /**
