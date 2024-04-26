@@ -18,9 +18,9 @@ class UserController extends Controller
         //
         $users = User::all();
         return response()->json([
-            "Users" => $users,
-            "StatusCode" => 200,
-            "Message" => "Get all users successfully"
+            "users" => $users,
+            "status" => 200,
+            "message" => "Get all users successfully"
         ]);
 
     }
