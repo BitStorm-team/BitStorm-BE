@@ -25,7 +25,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::get('/expertdetail',[ExpertDetailController::class,'index']);
 require __DIR__.'/auth.php';
 Route::get('/contacts',[ContactController::class,'getAllContacts']);
-Route::get('/reply-email/{id}',[ContactController::class,'getEmailById']);
+Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
 Route::post('/reply-email',[ContactController::class,'replyEmail']);
+// Route::get('/reply-email-detail/{id}',[ContactController::class,'replyEmailDetail']);
 
 Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');

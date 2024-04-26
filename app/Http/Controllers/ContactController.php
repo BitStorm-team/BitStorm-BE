@@ -31,29 +31,32 @@ class ContactController extends Controller
             'success' => true,
             'status' => 200,
             'message' => 'Success!',
-            'content' => [
+            'data' => [
                 'contacts' => $contacts,
             ],
         ]);
     }
-    public function getEmailById(Request $request)
+    public function getContactDetail(Request $request)
     {
         $id = $request->id;
-        $user = User::find($id);
-        if ($user) {
+        $contact = Contact::find($id);
+        $user_id = $contact->user_id;
+        $user = User::find($user_id);
+        if ($contact) {
             return response()->json([
                 'success' => true,
                 'status' => 200,
                 'message' => 'Success!',
-                'content' => [
-                    'email' => $user->email,
+                'data' => [
+                    'contact'=>$contact,
+                    'user'=>$user,
                 ],
             ]);
         } else {
             return response()->json([
                 'success' => false,
                 'status' => 404,
-                'message' => 'User not found',
+                'message' => 'Contact not found',
             ]);
         }
     }
@@ -69,7 +72,7 @@ class ContactController extends Controller
                     'success' => true,
                     'status' => 200,
                     'message' => 'Email sent successfully!',
-                    'content' => [
+                    'data' => [
                         'email' => $user_mail,
                         'subject' => $subject,
                         'body' => $body,
