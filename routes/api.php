@@ -33,6 +33,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/contacts', [ContactController::class, 'getAllContacts']);
     Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
     Route::post('/reply-email', [ContactController::class, 'replyEmail']);
+    Route::post('/contacts',[ContactController::class,'updateContactStatus']);
     //post
     Route::apiResource('posts',PostController::class);
 });
