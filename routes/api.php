@@ -22,9 +22,6 @@ use App\Http\Controllers\PostController;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::apiResource('posts',PostController::class);
-Route::get('/expertdetail',[ExpertDetailController::class,'index']);
-Route::get('/contacts',[ContactController::class,'getAllContacts']);
 
 // admin routes
 Route::prefix('admin')->group(function () {
@@ -36,7 +33,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/contacts', [ContactController::class, 'getAllContacts']);
     Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
     Route::post('/reply-email', [ContactController::class, 'replyEmail']);
-
-    
+    //post
+    Route::apiResource('posts',PostController::class);
 });
 require __DIR__.'/auth.php';
