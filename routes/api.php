@@ -34,6 +34,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
     Route::post('/reply-email', [ContactController::class, 'replyEmail']);
     Route::post('/contacts',[ContactController::class,'updateContactStatus']);
+    Route::delete('/contacts/{id}',[ContactController::class,'deleteContact']);
     //post
     Route::apiResource('posts',PostController::class);
 });

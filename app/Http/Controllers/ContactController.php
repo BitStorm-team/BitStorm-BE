@@ -105,4 +105,22 @@ class ContactController extends Controller
             ]);
         }
     }
+    public function deleteContact(Request $request){
+        $id = $request->id;
+        $contact = Contact::find($id);
+        if ($contact) {
+            $contact->delete();
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Contact deleted successfully',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'status' => 404,
+                'message' => 'Contact not found',
+            ]);
+        }
+    }
 }
