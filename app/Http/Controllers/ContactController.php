@@ -23,14 +23,14 @@ class ContactController extends Controller
             return response()->json([
                 'success' => false,
                 'status' => 404,
-                'message' => 'No contact list!',
+                'message' => 'No contact list',
             ]);
         }
 
         return response()->json([
             'success' => true,
             'status' => 200,
-            'message' => 'Success!',
+            'message' => 'Success',
             'data' => [
                 'contacts' => $contacts,
             ],
@@ -39,17 +39,14 @@ class ContactController extends Controller
     public function getContactDetail(Request $request)
     {
         $id = $request->id;
-        $contact = Contact::find($id);
-        $user_id = $contact->user_id;
-        $user = User::find($user_id);
+        $contact = Contact::with('user')->find($id);
         if ($contact) {
             return response()->json([
                 'success' => true,
                 'status' => 200,
-                'message' => 'Success!',
+                'message' => 'Success',
                 'data' => [
                     'contact'=>$contact,
-                    'user'=>$user,
                 ],
             ]);
         } else {
@@ -71,7 +68,7 @@ class ContactController extends Controller
                 [
                     'success' => true,
                     'status' => 200,
-                    'message' => 'Email sent successfully!',
+                    'message' => 'Email sent successfully',
                     'data' => [
                         'email' => $user_mail,
                         'subject' => $subject,
