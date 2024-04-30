@@ -92,8 +92,23 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($id)
     {
-        //
+        $post = Post::with('comments', 'comments.replies')->find($id);
+        if(empty($post)){
+            return response()->json([
+                'success' => false,
+                'message' => 'PostID not found',
+                'data'=> null,
+            ], 404);
+        }
+        $post->comments()->delete();
+        $post->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post and its comments deleted successfully!',
+            'data' => null,
+        ], 200);
     }
 }
