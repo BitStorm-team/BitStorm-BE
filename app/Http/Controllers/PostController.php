@@ -48,7 +48,7 @@ class PostController extends Controller
                 'success' => false,
                 'message' => 'PostID not found',
                 'data'=> null,
-            ], 200);
+            ], 404);
         }
         return response()->json([
             'success' => true,
@@ -72,7 +72,7 @@ class PostController extends Controller
                 'success' => false,
                 'message' => 'PostID not found',
                 'data'=> null,
-            ], 200);
+            ], 404);
         }
         $newStatus = !($post->status);
         $post->update([

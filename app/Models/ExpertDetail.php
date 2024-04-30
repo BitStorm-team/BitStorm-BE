@@ -13,9 +13,13 @@ class ExpertDetail extends Model
         $experts = User::with('experts')->where('role_id','=',3)->get();
         return $experts;
     }
-    public function users()
+    public function user()
     {
         return $this->hasOne(User::class);
+    }
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
     }
 
 }
