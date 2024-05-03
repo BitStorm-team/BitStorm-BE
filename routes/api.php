@@ -44,4 +44,4 @@ require __DIR__.'/auth.php';
 // experts api
 
 //get experts details
-Route::get('/expertDetail/{id}', [ContactController::class, 'getAllContacts']);
+Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);

@@ -17,5 +17,5 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-Route::get('/expertDetail/{id}', [ExpertDetailController::class, 'getExpertDetail']);
+// Route::get('/expertDetail/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 
