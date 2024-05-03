@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpertDetail;
+use App\Models\Calendar;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Nette\Schema\Expect;
@@ -32,6 +34,43 @@ class ExpertDetailController extends Controller
     {
       $expert = $this->experts->getAllExpert();
       return $expert;
+    }
+
+    // Get expert details
+    public function getExpertDetail($id) {
+        // Bước 1: Lấy chi tiết của chuyên gia dựa trên id
+        $expertDetail = ExpertDetail::where('user_id', $id)->first();
+        
+        if (!$expertDetail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Expert not found!',
+            ], 404);
+        }
+        // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
+        $user = $expertDetail->user;
+
+        // Bước 3: Lấy tất cả các sự kiện trong lịch mà chuyên gia đó tham gia
+        $calendars = Calendar::where('expert_id', $id)->get();
+
+        //  suggest experts by average_rating
+        $suggestExperts = ExpertDetail::where('average_rating', 'like', '%' . $expertDetail->average_rating . '%')->get();
+
+
+        // Kết hợp thông tin từ $user và $expertDetail vào một mảng
+        $data = [
+            'user' => $user,
+            'expertDetail' => $expertDetail,
+            'schedules' => $calendars,
+            'suggestExperts' => $suggestExperts,
+        ];
+
+        // Trả về view với dữ liệu đã lấy được
+        return response()->json([
+            'success' => true,
+            'message' => 'Show detail expert successfully!',
+            'data' => $data,
+        ], 200);
     }
 
     /**

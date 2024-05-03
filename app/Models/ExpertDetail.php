@@ -15,11 +15,17 @@ class ExpertDetail extends Model
     }
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
     public function contacts()
     {
         return $this->hasMany(Contact::class);
     }
+
+    public function calendars()
+    {
+        return $this->hasMany(Calendar::class, 'expert_id', 'id');
+    }
+
 
 }
