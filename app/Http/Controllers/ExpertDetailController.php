@@ -32,12 +32,12 @@ class ExpertDetailController extends Controller
      */
     public function index()
     {
-      $expert = $this->experts->getAllExpert();
-      return $expert;
+        $expert = $this->experts->getAllExpert();
+        return $expert;
     }
 
     // Get expert details
- /**
+    /**
      * @OA\Get(
      *     path="/api/expert/{id}",
      *     summary="Get one expert detail ",
@@ -55,19 +55,23 @@ class ExpertDetailController extends Controller
      *     security={{"bearerAuth":{}}}
      * )
      */
-    public function getExpertDetail($id) {
+    public function getExpertDetail($id)
+    {
         // Bước 1: Lấy chi tiết của chuyên gia dựa trên id
         $expertDetail = ExpertDetail::where('user_id', $id)->first();
         if (!$expertDetail) {
             return response()->json([
                 'success' => false,
-                'message' => 'Không tìm thấy chuyên gia!',
+                'message' => 'Expert not found!',
             ], 404);
         }
         // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
         $user = $expertDetail->user;
-        // Bước 3: Lấy tất cả các sự kiện trong lịch mà chuyên gia đó tham gia
-        $calendars = Calendar::where('expert_id', $id)->get();
+        // Step 3: Get all calendars that are booked and available in the present and future
+        $currentDateTime = date("Y-m-d H:i:s");
+        $calendars = Calendar::where('expert_id', $id)
+            ->where('start_time', '>=', $currentDateTime)
+            ->get();
         //  suggest experts by average_rating
         $suggestExperts = ExpertDetail::where('average_rating', 'like', '%' . $expertDetail->average_rating . '%')->get();
         // Kết hợp thông tin từ $user và $expertDetail vào một mảng
@@ -79,7 +83,7 @@ class ExpertDetailController extends Controller
         // Trả về view với dữ liệu đã lấy được
         return response()->json([
             'success' => true,
-            'message' => 'Thành công!',
+            'message' => 'Get detail expert successfully!',
             'data' => $data,
         ], 200);
     }

@@ -22,11 +22,13 @@ class CalendarFactory extends Factory
 
         return [
             'expert_id' => $user->id,
-            'start_time' => $this->faker->time(),
-            'end_time' => $this->faker->time(),
+            'start_time' => $this->faker->dateTime(), // Generates a random datetime
+            'end_time' => $this->faker->dateTime(), // Generates a random datetime
             'price' => $this->faker->randomFloat(2, 10, 100),
             'describe' => $this->faker->paragraph,
-            // Các trường khác của Calendar có thể được tạo ngẫu nhiên trong factory
+            'status' => $this->faker->boolean()
+            // Other fields of the Calendar model can be randomly generated in the factory
         ];
     }
+
 }
