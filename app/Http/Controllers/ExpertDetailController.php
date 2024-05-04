@@ -21,7 +21,7 @@ class ExpertDetailController extends Controller
      */
     /**
      * @OA\Get(
-     *     path="/api/expertdetail",
+     *     path="/api/admin/expertdetail",
      *     summary="Display all expert form database",
      *      tags={"Expert Details"},
      *     @OA\Response(response="200", description="Success"),
@@ -31,9 +31,53 @@ class ExpertDetailController extends Controller
     public function index()
     {
       $expert = $this->experts->getAllExpert();
-      return $expert;
+      if($expert->isEmpty()){
+        return response()->json([
+            'success' => false,
+            'message' => 'Experts not found',
+            'data'=> null,
+        ], 404);
+      };
+      return response()->json([
+        'success' => true,
+        'message' => 'Success',
+        'data' => [
+            'experts' => $expert,
+        ]
+        ],200);
     }
 
+    public function getListExpert()
+    {
+        $experts = $this->experts->getListExpert();
+        
+        if($experts->isEmpty()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Experts not found',
+                'data'=> null,
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Success',
+            'total' => 15,
+            'per_page' => 5,
+            'current_page' => 1,
+            'last_page' => 4,
+            'first_page_url' => null,
+            'last_page_url' =>null,
+            'next_page_url' => null,
+            'prev_page_url' => null,
+            'path' => "",
+            'from' => 1,
+            'to' => 10,
+            'data' => [
+                $experts
+            ],
+        ],200);
+    }
+    
     /**
      * Store a newly created resource in storage.
      *

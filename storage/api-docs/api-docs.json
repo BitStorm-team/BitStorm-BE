@@ -5,13 +5,13 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/expertdetail": {
+        "/api/admin/expertdetail": {
             "get": {
                 "tags": [
                     "Expert Details"
                 ],
                 "summary": "Display all expert form database",
-                "operationId": "ad7daa1a7e88950fe1ced57a7f0611db",
+                "operationId": "c8db15f0ed45328925226e269390e71d",
                 "responses": {
                     "200": {
                         "description": "Success"

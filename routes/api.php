@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\PostController;
 
 /*
@@ -23,6 +24,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 // admin routes
+Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
     
     Route::get('/expertdetail', [ExpertDetailController::class, 'index']);
