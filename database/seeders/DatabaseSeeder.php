@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             PostSeeder::class,
             CommentsPostSeeder::class,
             RepliesPostSeeder::class,
+            CalendarSeeder::class,
         ]);
 
     }
