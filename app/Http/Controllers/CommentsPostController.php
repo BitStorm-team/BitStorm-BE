@@ -14,7 +14,12 @@ class CommentsPostController extends Controller
      */
     public function index()
     {
-        //
+        $commentsPosts=CommentsPost::with('user','replies.user')->paginate(15);
+        return response()->json([
+            'success' => true,
+            'message' => 'Show all comments successfully!',
+            'data' => $commentsPosts,
+        ], 200);
     }
 
     /**
