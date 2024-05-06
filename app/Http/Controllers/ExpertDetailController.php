@@ -41,9 +41,7 @@ class ExpertDetailController extends Controller
       return response()->json([
         'success' => true,
         'message' => 'Success',
-        'data' => [
-            'experts' => $expert,
-        ]
+        'data' => $expert
         ],200);
     }
 
