@@ -5,13 +5,93 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/expertdetail": {
+        "/api/admin/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get all comments",
+                "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
+                "responses": {
+                    "200": {
+                        "description": "All Comments"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/expertdetail": {
             "get": {
                 "tags": [
                     "Expert Details"
                 ],
                 "summary": "Display all expert form database",
-                "operationId": "ad7daa1a7e88950fe1ced57a7f0611db",
+                "operationId": "c8db15f0ed45328925226e269390e71d",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/expert/{id}": {
+            "get": {
+                "tags": [
+                    "Expert Details"
+                ],
+                "summary": "Get one expert detail ",
+                "operationId": "f53c0436ddae0bf10e566f3f761f825e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Expert ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/experts": {
+            "get": {
+                "tags": [
+                    "Expert Details"
+                ],
+                "summary": "Display all expert form database and display in the website",
+                "operationId": "af602ec9e1245c085358581af68afd4b",
                 "responses": {
                     "200": {
                         "description": "Success"

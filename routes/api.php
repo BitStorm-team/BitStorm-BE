@@ -1,6 +1,4 @@
 <?php
-
-use App\Models\CommentsPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
@@ -8,7 +6,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CommentsPostController;
 use App\Http\Controllers\ExpertDetailController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +22,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 // admin routes
+Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
 
@@ -50,11 +48,9 @@ Route::prefix('user')->group(function (){
 Route::prefix('expert')->group(function (){
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
 
+    Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
 // auth api
 require __DIR__.'/auth.php';
 
-// experts api
 
-//get experts details
-Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);
