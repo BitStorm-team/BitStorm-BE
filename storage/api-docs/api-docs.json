@@ -23,6 +23,42 @@
                     }
                 ]
             }
+        },
+        "/api/expert/{id}": {
+            "get": {
+                "tags": [
+                    "Expert Details"
+                ],
+                "summary": "Get one expert detail ",
+                "operationId": "f53c0436ddae0bf10e566f3f761f825e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Expert ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {

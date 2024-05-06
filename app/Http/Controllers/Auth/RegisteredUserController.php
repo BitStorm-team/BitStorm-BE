@@ -48,14 +48,12 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        $roleName = $user->role->name;
+        $user->role;
         return response()->json([
             'success' => true,
             'status' => 200,
             'message' => 'Đăn ký thành công!',
-            'role' => $roleName,
             'user' =>  Auth::user()
-
         ]);
     }
 }

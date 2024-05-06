@@ -30,28 +30,52 @@ class AuthenticatedSessionController extends Controller
     //  }
 
 
-    public function store(Request $request)
+    public function store(LoginRequest $request)
     {
-        // Kiểm tra xác thực đăng nhập
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            // Nếu thông tin đăng nhập không chính xác, trả về một response lỗi
+        $request->authenticate();
+
+        // Get email and password from request
+        $email = $request->email;
+        $password = $request->password;
+
+        // Find user by email
+        $user = User::where('email', $email)->first();
+
+        // Check if user exists
+        if (!$user) {
             return response()->json([
                 'message' => 'Thông tin đăng nhập không chính xác.'
             ], 401);
         }
-        $email = $request->get('email');
-        $user = User::where('email', $email)->first();
-        Auth::login($user);
-        $roleName = $user->role->name;
-        // Trả về response thành công nếu đăng nhập thành công
-        return response()->json([
-            'success' => true,
-            'status' => 200,
-            'message' => 'Đăng nhập thành công!',
-            'role' => $roleName,
-            'user' =>  Auth::user()
+
+        // Validate the request data
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
+
+        // Attempt to authenticate the user
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            // Authentication passed, generate token
+            $token = $user->createToken('AuthToken')->plainTextToken;
+            Auth::login($user);
+            $user->role;
+            // Return success response with token and user details
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng nhập thành công!',
+                'data' => $user,
+                'access_token' => $token,
+            ], 200);
+        }
+
+        // Authentication failed, return error response
+        return response()->json([
+            'message' => 'Thông tin đăng nhập không chính xác.'
+        ], 401);
     }
+
+
 
 
 
@@ -59,7 +83,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): Response
+    public function logout(Request $request)
     {
         Auth::guard('web')->logout();
 
@@ -67,6 +91,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response()->json([
+            'message' => 'User logged out successfully.'
+        ], 200);
     }
 }
