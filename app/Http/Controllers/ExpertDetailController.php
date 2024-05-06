@@ -45,8 +45,6 @@ class ExpertDetailController extends Controller
         'message' => 'Success',
         'data' => $experts
         ],200);
-        $experts = $this->experts->getAllExpert();
-        return $experts;
     }
 
     // Get expert details
@@ -112,7 +110,7 @@ class ExpertDetailController extends Controller
     public function getListExpert()
     {
         $experts = $this->experts->getListExpert();
-        
+
         if($experts->isEmpty()){
             return response()->json([
                 'success' => false,
@@ -139,7 +137,7 @@ class ExpertDetailController extends Controller
             ],
         ],200);
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *

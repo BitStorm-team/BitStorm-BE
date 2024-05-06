@@ -49,11 +49,9 @@ Route::prefix('user')->group(function (){
 Route::prefix('expert')->group(function (){
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
 
+    Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
 // auth api
 require __DIR__.'/auth.php';
 
-// experts api
 
-//get experts details
-Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);
