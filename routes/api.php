@@ -41,6 +41,16 @@ Route::prefix('admin')->group(function () {
     //booking
     Route::get('/bookings',[BookingController::class,'getAllBookings']);
 });
+
+Route::prefix('user')->group(function (){
+    Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
+
+});
+
+Route::prefix('expert')->group(function (){
+    Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
+
+});
 // auth api
 require __DIR__.'/auth.php';
 

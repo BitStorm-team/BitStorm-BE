@@ -104,9 +104,41 @@ class ExpertDetailController extends Controller
      * @param  \App\Models\ExpertDetail  $expertDetail
      * @return \Illuminate\Http\Response
      */
-    public function show(ExpertDetail $expertDetail)
+    /**
+    * @OA\Get(
+    *     path="/api/expert/expert-profile/{id}",
+    *     summary="Display expert profile",
+    *     tags={"Expert profile"},
+    *     @OA\Parameter(
+    *              name="id",
+    *              in="path",
+    *              description="Expert ID",
+    *              required=true,
+    *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function show($id)
     {
-        //
+        $expert = $this->experts->getExpertProfile($id);
+
+        if(empty($expert)){
+            return response()->json([
+                'success' => false,
+                'message' => 'ExpertID not found',
+                'data'=> null,
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Show the expert successfully!',
+            'data' => $expert,
+        ], 200);
     }
 
     /**
