@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ExpertDetailController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,4 +17,4 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-
+Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);

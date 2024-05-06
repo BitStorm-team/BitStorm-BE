@@ -12,6 +12,10 @@ class ExpertDetail extends Model
     {
         $experts = User::with('experts')->where('role_id','=',3)->get();
         return $experts;
+    }   
+    public function getExpertProfile($id){
+        $expert = User::with('experts')->where('role_id','=',3)->find($id);
+        return $expert;
     }
     public function getListExpert()
     {
@@ -19,13 +23,20 @@ class ExpertDetail extends Model
         ->get();
         return $experts;
     }
+    
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
     public function contacts()
     {
         return $this->hasMany(Contact::class);
     }
+
+    public function calendars()
+    {
+        return $this->hasMany(Calendar::class, 'expert_id', 'id');
+    }
+
 
 }

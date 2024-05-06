@@ -23,6 +23,78 @@
                     }
                 ]
             }
+        },
+        "/api/expert/expert-profile/{id}": {
+            "get": {
+                "tags": [
+                    "Expert profile"
+                ],
+                "summary": "Display expert profile",
+                "operationId": "efef67554ddfd2a33fe6cffa0a4e28f6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Expert ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/user-profile/{id}": {
+            "get": {
+                "tags": [
+                    "User profile"
+                ],
+                "summary": "Display user profile",
+                "operationId": "9b320b2ce93d88e6b4aadb20cec31980",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
