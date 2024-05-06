@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Post;
+use App\Models\Calendar;
 use App\Models\User;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Booking>
@@ -22,7 +22,7 @@ class BookingFactory extends Factory
         return [
             'user_id' => $user->id,
             'calendar_id' => $calendar->id,
-            'note' => $this->faker->text(),
+            'note' => $this->faker->text(100),
             'status' => $this->faker->boolean(),
         ];
     }

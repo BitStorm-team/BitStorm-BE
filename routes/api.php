@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
@@ -37,6 +38,8 @@ Route::prefix('admin')->group(function () {
     //post
     Route::apiResource('posts',PostController::class);
     Route::put('posts/update-status/{id}',[PostController::class,'updatePostStatus'])->name('admin.post.update.status');
+    //booking
+    Route::get('/bookings',[BookingController::class,'getAllBookings']);
 });
 // auth api
 require __DIR__.'/auth.php';

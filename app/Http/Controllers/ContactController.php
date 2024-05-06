@@ -22,19 +22,17 @@ class ContactController extends Controller
         if ($contacts->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'status' => 404,
                 'message' => 'No contact list',
-            ]);
+            ],404);
         }
 
         return response()->json([
             'success' => true,
-            'status' => 200,
             'message' => 'Success',
             'data' => [
                 'contacts' => $contacts,
-            ],
-        ]);
+            ]
+        ],200);
     }
     public function getContactDetail(Request $request)
     {
@@ -43,18 +41,16 @@ class ContactController extends Controller
         if ($contact) {
             return response()->json([
                 'success' => true,
-                'status' => 200,
                 'message' => 'Success',
                 'data' => [
                     'contact'=>$contact,
                 ],
-            ]);
+            ],200);
         } else {
             return response()->json([
                 'success' => false,
-                'status' => 404,
                 'message' => 'Contact not found',
-            ]);
+            ],404);
         }
     }
     public function replyEmail(Request $request)
@@ -67,21 +63,19 @@ class ContactController extends Controller
             return response()->json(
                 [
                     'success' => true,
-                    'status' => 200,
                     'message' => 'Email sent successfully',
                     'data' => [
                         'email' => $user_mail,
                         'subject' => $subject,
                         'body' => $body,
                     ],
-                ]
+                ],200
             );
         }catch(Exception $e){
             return response()->json([
                 'success' => false,
-                'status' => 500,
                 'message' => 'Error sending email: ' . $e->getMessage(),
-            ]);
+            ],500);
         }
     }
     public function updateContactStatus(Request $request){
@@ -93,16 +87,14 @@ class ContactController extends Controller
             $contact->save();
             return response()->json([
                 'success' => true,
-                'status' => 200,
                 'message' => 'Contact status updated successfully',
-            ]);
+            ],200);
         } else {
             // Handle the case where the contact with the given ID is not found
             return response()->json([
                 'success' => false,
-                'status' => 404,
                 'message' => 'Contact not found',
-            ]);
+            ],404);
         }
     }
     public function deleteContact(Request $request){
@@ -112,15 +104,13 @@ class ContactController extends Controller
             $contact->delete();
             return response()->json([
                 'success' => true,
-                'status' => 200,
                 'message' => 'Contact deleted successfully',
-            ]);
+            ],200);
         } else {
             return response()->json([
                 'success' => false,
-                'status' => 404,
                 'message' => 'Contact not found',
-            ]);
+            ],404);
         }
     }
 }
