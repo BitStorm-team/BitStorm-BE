@@ -32,8 +32,8 @@ class ExpertDetailController extends Controller
      */
     public function index()
     {
-      $expert = $this->experts->getAllExpert();
-      if($expert->isEmpty()){
+      $experts = $this->experts->getAllExpert();
+      if($experts->isEmpty()){
         return response()->json([
             'success' => false,
             'message' => 'Experts not found',
@@ -43,10 +43,10 @@ class ExpertDetailController extends Controller
       return response()->json([
         'success' => true,
         'message' => 'Success',
-        'data' => $expert
+        'data' => $experts
         ],200);
-        $expert = $this->experts->getAllExpert();
-        return $expert;
+        $experts = $this->experts->getAllExpert();
+        return $experts;
     }
 
     // Get expert details
@@ -100,7 +100,15 @@ class ExpertDetailController extends Controller
             'data' => $data,
         ], 200);
     }
-
+   /**
+     * @OA\Get(
+     *     path="/api/experts",
+     *     summary="Display all expert form database and display in the website",
+     *      tags={"Expert Details"},
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function getListExpert()
     {
         $experts = $this->experts->getListExpert();
