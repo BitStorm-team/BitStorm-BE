@@ -14,7 +14,7 @@ use function PHPUnit\Framework\isEmpty;
 
 class ContactController extends Controller
 {
-        /**
+    /**
      * @OA\Get(
      *      path="/contacts",
      *      operationId="getAllContacts",
@@ -52,8 +52,7 @@ class ContactController extends Controller
      */
     public function getAllContacts()
     {
-        $contacts = Contact::all();
-
+        $contacts = Contact::with('user')->get();
         if ($contacts->isEmpty()) {
             return response()->json([
                 'success' => false,
