@@ -14,22 +14,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-
-
-    //  public function store(LoginRequest $request)
-    //  {
-    //      $request->authenticate();
-    //      $request->session()->regenerate();
-
-    //      $user = $request->user(); // Lấy thông tin người dùng đã đăng nhập
-
-    //      return response()->json([
-    //          'user' => $user,
-    //          'message' => 'Login successful'
-    //      ]);
-    //  }
-
-
+    
     public function store(LoginRequest $request)
     {
         $request->authenticate();
@@ -74,10 +59,6 @@ class AuthenticatedSessionController extends Controller
             'message' => 'Thông tin đăng nhập không chính xác.'
         ], 401);
     }
-
-
-
-
 
 
     /**
