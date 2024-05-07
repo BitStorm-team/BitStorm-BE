@@ -12,9 +12,25 @@ class CommentsPostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * @OA\Get(
+     *     path="/api/admin/comments",
+     *     summary="Get all comments",
+     *     tags={"Comments"},
+     *     @OA\Response(response=200, description="All Comments"),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Resource Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function index()
     {
-        //
+        $commentsPosts=CommentsPost::with('user','replies.user')->paginate(15);
+        return response()->json([
+            'success' => true,
+            'message' => 'Show all comments successfully!',
+            'data' => $commentsPosts,
+        ], 200);
     }
 
     /**

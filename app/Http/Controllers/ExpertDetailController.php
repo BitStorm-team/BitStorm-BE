@@ -23,7 +23,7 @@ class ExpertDetailController extends Controller
      */
     /**
      * @OA\Get(
-     *     path="/api/expertdetail",
+     *     path="/api/admin/expertdetail",
      *     summary="Display all expert form database",
      *      tags={"Expert Details"},
      *     @OA\Response(response="200", description="Success"),
@@ -32,8 +32,19 @@ class ExpertDetailController extends Controller
      */
     public function index()
     {
-        $expert = $this->experts->getAllExpert();
-        return $expert;
+      $experts = $this->experts->getAllExpert();
+      if($experts->isEmpty()){
+        return response()->json([
+            'success' => false,
+            'message' => 'Experts not found',
+            'data'=> null,
+        ], 404);
+      };
+      return response()->json([
+        'success' => true,
+        'message' => 'Success',
+        'data' => $experts
+        ],200);
     }
 
     // Get expert details
@@ -87,6 +98,45 @@ class ExpertDetailController extends Controller
             'data' => $data,
         ], 200);
     }
+   /**
+     * @OA\Get(
+     *     path="/api/experts",
+     *     summary="Display all expert form database and display in the website",
+     *      tags={"Expert Details"},
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function getListExpert()
+    {
+        $experts = $this->experts->getListExpert();
+
+        if($experts->isEmpty()){
+            return response()->json([
+                'success' => false,
+                'message' => 'Experts not found',
+                'data'=> null,
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Success',
+            'total' => 15,
+            'per_page' => 5,
+            'current_page' => 1,
+            'last_page' => 4,
+            'first_page_url' => null,
+            'last_page_url' =>null,
+            'next_page_url' => null,
+            'prev_page_url' => null,
+            'path' => "",
+            'from' => 1,
+            'to' => 10,
+            'data' => [
+                $experts
+            ],
+        ],200);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -104,9 +154,41 @@ class ExpertDetailController extends Controller
      * @param  \App\Models\ExpertDetail  $expertDetail
      * @return \Illuminate\Http\Response
      */
-    public function show(ExpertDetail $expertDetail)
+    /**
+    * @OA\Get(
+    *     path="/api/expert/expert-profile/{id}",
+    *     summary="Display expert profile",
+    *     tags={"Expert profile"},
+    *     @OA\Parameter(
+    *              name="id",
+    *              in="path",
+    *              description="Expert ID",
+    *              required=true,
+    *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function show($id)
     {
-        //
+        $expert = $this->experts->getExpertProfile($id);
+
+        if(empty($expert)){
+            return response()->json([
+                'success' => false,
+                'message' => 'ExpertID not found',
+                'data'=> null,
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Show the expert successfully!',
+            'data' => $expert,
+        ], 200);
     }
 
     /**

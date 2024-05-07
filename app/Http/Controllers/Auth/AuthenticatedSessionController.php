@@ -11,10 +11,29 @@ use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
+
     /**
-     * Handle an incoming authentication request.
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="Login to the website",
+     *     tags={"authent"},
+     *     description="Login to the website by providing email address and password.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Request body",
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="admin@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="admin@gmail.com")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login successful"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
      */
-    
+
     public function store(LoginRequest $request)
     {
         $request->authenticate();
@@ -29,14 +48,14 @@ class AuthenticatedSessionController extends Controller
         // Check if user exists
         if (!$user) {
             return response()->json([
-                'message' => 'Thông tin đăng nhập không chính xác.'
+                'message' => 'The information to login is not available'
             ], 401);
         }
 
         // Validate the request data
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:5',
         ]);
 
         // Attempt to authenticate the user
@@ -48,22 +67,22 @@ class AuthenticatedSessionController extends Controller
             // Return success response with token and user details
             return response()->json([
                 'success' => true,
-                'message' => 'Đăng nhập thành công!',
+                'message' => 'Login successfully!',
                 'data' => $user,
                 'access_token' => $token,
             ], 200);
         }
 
-        // Authentication failed, return error response
-        return response()->json([
-            'message' => 'Thông tin đăng nhập không chính xác.'
-        ], 401);
     }
 
 
     /**
      * Destroy an authenticated session.
      */
+
+
+
+
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
