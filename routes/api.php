@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CommentsPostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
@@ -22,10 +23,12 @@ use App\Http\Controllers\PostController;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+// comment post
+Route::post('/createComment',[CommentsPostController::class,'store']);
 // admin routes
 Route::prefix('admin')->group(function () {
 
-    Route::get('/expertdetail', [ExpertDetailController::class, 'index']);
+    Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
     // contact
