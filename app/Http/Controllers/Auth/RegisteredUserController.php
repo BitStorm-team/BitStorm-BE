@@ -19,6 +19,32 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     summary="Register to the website",
+     *     tags={"authent"},
+     *     description="Register to the website by providing email address, password, name, confirmation password, and role ID.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Request body",
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "confirmation_password", "role_id"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="bao@gmail.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="bao@gmail.com"),
+     *             @OA\Property(property="confirmation_password", type="string", format="password", example="bao@gmail.com"),
+     *             @OA\Property(property="role_id", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Registration successful"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error")
+     * )
+     */
+
     public function store(Request $request)
     {
         try {
@@ -48,14 +74,12 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
-        $roleName = $user->role->name;
+        $user->role;
         return response()->json([
             'success' => true,
             'status' => 200,
-            'message' => 'Đăn ký thành công!',
-            'role' => $roleName,
+            'message' => 'Register Successfully',
             'user' =>  Auth::user()
-
         ]);
     }
 }
