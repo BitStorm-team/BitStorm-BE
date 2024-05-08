@@ -7,6 +7,7 @@ use App\Models\Post;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class CommentsPostController extends Controller
 {
@@ -85,6 +86,12 @@ class CommentsPostController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [ 
+           'content' => 'required'
+        ]);
+        if ($validator->fails()) {
+          return response()->json($validator->errors(), 422);
+        }
         $data = [
             'post_id' => $request->post_id,
             'user_id' => $request->user_id,
