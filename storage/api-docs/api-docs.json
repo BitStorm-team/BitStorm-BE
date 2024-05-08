@@ -78,6 +78,25 @@
                     },
                     "500": {
                         "description": "Internal server error. Failed to create the comment post."},
+        "/api/admin/bookings": {
+            "get": {
+                "tags": [
+                    "Show Bookings"
+                ],
+                "summary": "Display all bookings from database",
+                "operationId": "e02b626135501ab4454bdf20f953d839",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/comments": {
             "get": {
                 "tags": [
@@ -94,6 +113,193 @@
                     },
                     "404": {
                         "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/contacts": {
+            "post": {
+                "tags": [
+                    "update Contact Status"
+                ],
+                "summary": "Update contact status",
+                "description": "Update the status of a contact",
+                "operationId": "6168b49f26dc7b7f8c0f185bc9017b70",
+                "requestBody": {
+                    "description": "Request body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "status": {
+                                        "type": "boolean",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Contact status updated successfully"
+                    },
+                    "404": {
+                        "description": "Contact not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Show Contacts"
+                ],
+                "summary": "Display all contacts from database",
+                "operationId": "66d8ed88aa7e7cf5346962413d6520e0",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/contacts/{id}": {
+            "get": {
+                "tags": [
+                    "Contact Details"
+                ],
+                "summary": "Get one contact detail ",
+                "operationId": "1a84fbd3f8485f1f01c67c1f0cc02b43",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Contact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Delete Contact"
+                ],
+                "summary": "Delete one contact detail",
+                "operationId": "69b59ff29c1e55c5c5f442499d66af5f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Contact ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/replyEmail": {
+            "post": {
+                "tags": [
+                    "Reply Email"
+                ],
+                "summary": "Reply to email",
+                "description": "Reply to an email with a message",
+                "operationId": "a724ed1bf326e8336d07e21e60aaa0ff",
+                "requestBody": {
+                    "description": "Request body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "nguyenmaioc0@gmail.com"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Your message goes here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email sent successfully"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 },
                 "security": [
