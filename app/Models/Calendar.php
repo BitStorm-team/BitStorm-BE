@@ -13,7 +13,11 @@ class Calendar extends Model
 
     public function expertDetail()
     {
-        return $this->belongsTo(ExpertDetail::class);
+        return $this->belongsTo(ExpertDetail::class,'expert_id','user_id');
+    }
+    public function booking()
+    {
+        return $this->hasOne(Booking::class, 'booking_id');
     }
 }
 

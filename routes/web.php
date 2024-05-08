@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ExpertDetailController;
 /*
@@ -18,3 +19,6 @@ Route::get('/', function () {
 });
 
 Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);
+Route::get('/bookings', [BookingController::class, 'getAllBookings']);
+
+
