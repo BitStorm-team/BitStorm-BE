@@ -9,34 +9,15 @@ use function PHPUnit\Framework\isEmpty;
 
 class BookingController extends Controller
 {
-        /**
+    /**
      * @OA\Get(
-     *     path="/bookings",
-     *     tags={"Bookings"},
-     *     summary="Get all bookings",
-     *     description="Retrieve all bookings from the database.",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Show all bookings successfully"),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Booking")),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Bookings not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Bookings not found"),
-     *             @OA\Property(property="data", type="null"),
-     *         ),
-     *     ),
+     *     path="/api/admin/bookings",
+     *     summary="Display all bookings from database",
+     *      tags={"Show Bookings"},
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"bearerAuth":{}}}
      * )
-     **/
+     */
     public function getAllBookings(){
         $bookings = Booking::with('user','calendar.expertDetail.user')->get();
         if(!empty($bookings)){

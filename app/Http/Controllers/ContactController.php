@@ -8,46 +8,20 @@ use App\Models\Contact;
 use App\Models\User;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 
 use function PHPUnit\Framework\isEmpty;
 
 class ContactController extends Controller
-{
+{   
     /**
-     * @OA\Get(
-     *      path="/contacts",
-     *      operationId="getAllContacts",
-     *      tags={"Contacts"},
-     *      summary="Get all contacts",
-     *      description="Retrieve a list of all contacts.",
-     *      @OA\Response(
-     *          response=200,
-     *          description="Success",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="success", type="boolean", example=true),
-     *              @OA\Property(property="message", type="string", example="Success"),
-     *              @OA\Property(
-     *                  property="data",
-     *                  type="object",
-     *                  @OA\Property(
-     *                      property="contacts",
-     *                      type="array",
-     *                      @OA\Items(ref="#/components/schemas/Contact")
-     *                  )
-     *              )
-     *          )
-     *      ),
-     *      @OA\Response(
-     *          response=404,
-     *          description="No contact list",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="success", type="boolean", example=false),
-     *              @OA\Property(property="message", type="string", example="No contact list")
-     *          )
-     *      )
+     * @OA\Delete(
+     *     path="/api/admin/contacts",
+     *     summary="Display all contacts from database",
+     *      tags={"Show Contacts"},
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"bearerAuth":{}}}
      * )
      */
     public function getAllContacts()
@@ -68,47 +42,23 @@ class ContactController extends Controller
             ]
         ],200);
     }
+    // Get contact details
     /**
      * @OA\Get(
-     *     path="/api/contact-detail",
-     *     summary="Get contact detail",
-     *     description="Retrieve details of a contact by ID.",
-     *     tags={"Contact"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="query",
-     *         description="ID of the contact",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Success"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(
-     *                     property="contact",
-     *                     ref="#/components/schemas/Contact"
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Contact not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Contact not found")
-     *         )
-     *     )
+     *     path="/api/admin/contacts/{id}",
+     *     summary="Get one contact detail ",
+     *     tags={"Contact Details"},
+     *          @OA\Parameter(
+     *              name="id",
+     *               in="path",
+     *              description="Contact ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
+     *          ),
+     *     @OA\Response(response=200, description="Success"),
+     *      @OA\Response(response=400, description="Bad request"),
+     *      @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
      * )
      */
     public function getContactDetail(Request $request)
@@ -131,45 +81,26 @@ class ContactController extends Controller
         }
     }
     /**
-     * @OA\Post(
-     *     path="/api/reply-email",
-     *     summary="Reply to an email",
-     *     description="Reply to an email sent by a user.",
-     *     tags={"Email"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         description="Email data",
-     *         @OA\JsonContent(
-     *             required={"email", "message"},
-     *             @OA\Property(property="email", type="string", format="email", example="example@example.com"),
-     *             @OA\Property(property="message", type="string", example="This is the reply message.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Email sent successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Email sent successfully"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="email", type="string", format="email", example="example@example.com"),
-     *                 @OA\Property(property="subject", type="string", example="Email reply your contact"),
-     *                 @OA\Property(property="body", type="string", example="This is the reply message.")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=500,
-     *         description="Error sending email",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Error sending email: [error message]")
-     *         )
-     *     )
-     * )
-     */
+ * @OA\Post(
+ *     path="/api/admin/replyEmail",
+ *     summary="Reply to email",
+ *     tags={"Reply Email"},
+ *     description="Reply to an email with a message",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         description="Request body",
+ *         @OA\JsonContent(
+ *             required={"email", "message"},
+ *             @OA\Property(property="email", type="string", format="email", example="nguyenmaioc0@gmail.com"),
+ *             @OA\Property(property="message", type="string", example="Your message goes here"),
+ *         )
+ *     ),
+ *     @OA\Response(response=200, description="Email sent successfully"),
+ *     @OA\Response(response=400, description="Bad request"),
+ *     @OA\Response(response=500, description="Internal server error"),
+ *     security={{"bearerAuth":{}}}
+ * )
+ */
     public function replyEmail(Request $request)
     {
         $user_mail = $request->email;
@@ -196,50 +127,32 @@ class ContactController extends Controller
         }
     }
     /**
-     * @OA\Put(
-     *     path="/api/update-contact-status",
+     * @OA\Post(
+     *     path="/api/admin/contacts",
      *     summary="Update contact status",
-     *     description="Update the status of a contact by ID.",
-     *     tags={"Contact"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="query",
-     *         description="ID of the contact",
+     *     tags={"update Contact Status"},
+     *     description="Update the status of a contact",
+     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="New status for the contact",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string",
-     *             enum={"active", "inactive"}
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Contact status updated successfully",
+     *         description="Request body",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Contact status updated successfully")
+     *             required={"id", "status"},
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="status", type="boolean", example="1")
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Contact not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Contact not found")
-     *         )
+     *     @OA\Response(response=200, description="Contact status updated successfully"),
+     *     @OA\Response(response=404, description="Contact not found"),
+     *     security={{"bearerAuth":{}}},
+     *     @OA\SecurityScheme(
+     *         securityScheme="X-CSRF-TOKEN",
+     *         type="apiKey",
+     *         in="header",
+     *         name="X-CSRF-TOKEN",
+     *         description="CSRF Token"
      *     )
      * )
-    */
+     */
     public function updateContactStatus(Request $request){
         $id = $request->id;
         $status = $request->status;
@@ -259,40 +172,23 @@ class ContactController extends Controller
         }
     }
     /**
-     * @OA\Delete(
-     *     path="/api/delete-contact",
-     *     summary="Delete contact",
-     *     description="Delete a contact by ID.",
-     *     tags={"Contact"},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="query",
-     *         description="ID of the contact",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Contact deleted successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=true),
-     *             @OA\Property(property="message", type="string", example="Contact deleted successfully")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Contact not found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean", example=false),
-     *             @OA\Property(property="message", type="string", example="Contact not found")
-     *         )
-     *     )
-     * )
-    */
+ * @OA\Delete(
+ *     path="/api/admin/contacts/{id}",
+ *     summary="Delete one contact detail",
+ *     tags={"Delete Contact"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="Contact ID",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="Success"),
+ *     @OA\Response(response=400, description="Bad request"),
+ *     @OA\Response(response=404, description="Not Found"),
+ *     security={{"bearerAuth":{}}}
+ * )
+ */
     public function deleteContact(Request $request){
         $id = $request->id;
         $contact = Contact::find($id);

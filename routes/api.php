@@ -32,7 +32,7 @@ Route::prefix('admin')->group(function () {
     // contact
     Route::get('/contacts', [ContactController::class, 'getAllContacts']);
     Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
-    Route::post('/reply-email', [ContactController::class, 'replyEmail']);
+    Route::post('/replyEmail', [ContactController::class, 'replyEmail']);
     Route::post('/contacts',[ContactController::class,'updateContactStatus']);
     Route::delete('/contacts/{id}',[ContactController::class,'deleteContact']);
     //post
@@ -58,3 +58,4 @@ require __DIR__.'/auth.php';
 
 //get experts details
 Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);
+
