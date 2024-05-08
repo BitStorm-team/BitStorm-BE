@@ -57,7 +57,7 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
     public function expert()
-    {   
+    {
         return $this->hasOne(ExpertDetail::class);
     }
     protected static function boot()

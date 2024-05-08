@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
 use App\Models\CommentsPost;
 use Illuminate\Http\Request;
+use App\Models\Post;
+use DateTime;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
 
 class CommentsPostController extends Controller
 {
@@ -25,7 +31,7 @@ class CommentsPostController extends Controller
      */
     public function index()
     {
-        $commentsPosts=CommentsPost::with('user','replies.user')->paginate(15);
+        $commentsPosts = CommentsPost::with('user', 'replies.user')->paginate(15);
         return response()->json([
             'success' => true,
             'message' => 'Show all comments successfully!',
@@ -62,10 +68,46 @@ class CommentsPostController extends Controller
      * @param  \App\Models\CommentsPost  $commentsPost
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, CommentsPost $commentsPost)
+    public function update(Request $request, CommentsPost $commentsPost, $id)
     {
-        //
+        try {
+            // Validate request data
+            $validatedData = $request->validate([
+                'content' => 'required|string',
+                'status' => 'required|integer', // Validate status as an integer
+            ]);
+
+            // Find comment post by id
+            $comment = CommentsPost::findOrFail($id);
+
+            // Update the comment
+            $comment->update($validatedData);
+
+            // Return success response
+            return response()->json([
+                'success' => true,
+                'message' => 'Comment post updated successfully!',
+                'data' => $comment,
+            ], 200);
+        } catch (ValidationException $e) {
+            // Return validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation error',
+                'errors' => $e->validator->errors(),
+            ], 400);
+        } catch (\Exception $e) {
+            // Return error response for other exceptions
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update comment post',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
