@@ -205,4 +205,54 @@ class ContactController extends Controller
             ],404);
         }
     }
+    public function contactUs(Request $request) {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (Auth::check()) {
+            // Lấy thông tin của người dùng đã đăng nhập
+            $user_id = Auth::id();
+            $user = User::find($user_id);
+            $user_mail = $user->email;
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please log in to send the email',
+            ], 401);
+            // $user_mail = 'nguyenmaio0@gmail.com';
+        }
+    
+        $subject = "Email from Bistorm website";
+        $body = $request->message;
+    
+        try {
+            $admin_mail = env('MAIL_USERNAME');
+    
+            // Gửi email cho admin
+            Mail::to($admin_mail)->send(new SendMail($subject, $body));
+    
+            // Lưu thông tin liên hệ vào bảng contacts
+            $contact = new Contact();
+            $contact->user_id = $user_id;
+            // $contact->user_id = 23;
+
+            $contact->content = $body;
+            $contact->save();
+    
+            // Trả về phản hồi thành công
+            return response()->json([
+                'success' => true,
+                'message' => 'Email sent successfully',
+                'data' => [
+                    'email' => $user_mail,
+                    'subject' => $subject,
+                    'body' => $body,
+                ],
+            ], 200);
+        } catch(Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error sending email: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+    
 }
