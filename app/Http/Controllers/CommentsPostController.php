@@ -176,7 +176,7 @@ class CommentsPostController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'message' => $comment,
+                'message' => 'post_id or user_id not found',
             ], 404);
         }
     }
