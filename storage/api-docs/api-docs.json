@@ -5,6 +5,151 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/admin/bookings": {
+            "get": {
+                "tags": [
+                    "Show Bookings"
+                ],
+                "summary": "Display all bookings from database",
+                "operationId": "e02b626135501ab4454bdf20f953d839",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/user/booking/{user_id}/book-calendar/{calendar_id}": {
+            "post": {
+                "tags": [
+                    "Book calendar"
+                ],
+                "summary": "Book calendar",
+                "operationId": "e8b340e3f297297a431e5a5244cac10d",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "calendar_id",
+                        "in": "path",
+                        "description": "Calendar ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "note",
+                        "in": "query",
+                        "description": "Note",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get all comments",
+                "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
+                "responses": {
+                    "200": {
+                        "description": "All Comments"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/createComment": {
             "post": {
                 "tags": [
@@ -77,42 +222,7 @@
                         "description": "Unauthorized. Authentication is required."
                     },
                     "500": {
-                        "description": "Internal server error. Failed to create the comment post."},
-        "/api/admin/bookings": {
-            "get": {
-                "tags": [
-                    "Show Bookings"
-                ],
-                "summary": "Display all bookings from database",
-                "operationId": "e02b626135501ab4454bdf20f953d839",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/admin/comments": {
-            "get": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Get all comments",
-                "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
-                "responses": {
-                    "200": {
-                        "description": "All Comments"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Resource Not Found"
+                        "description": "Internal server error. Failed to create the comment post."
                     }
                 },
                 "security": [
@@ -383,42 +493,6 @@
                 ]
             }
         },
-        "/api/expert/{id}": {
-            "get": {
-                "tags": [
-                    "Expert Details"
-                ],
-                "summary": "Get one expert detail ",
-                "operationId": "f53c0436ddae0bf10e566f3f761f825e",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Expert ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success"
-                    },
-                    "400": {
-                        "description": "Bad request"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/expert/expert-profile/{id}": {
             "get": {
                 "tags": [
@@ -437,6 +511,31 @@
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "get": {
+                "tags": [
+                    "List users"
+                ],
+                "summary": "Display all users",
+                "operationId": "7682ed8f32d8216884bcdfd052b767cd",
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -490,6 +589,51 @@
                     }
                 ]
             }
+        },
+        "/api/admin/users/{id}": {
+            "put": {
+                "tags": [
+                    "Update user status"
+                ],
+                "summary": "Update user status",
+                "operationId": "68e1d88237cb8f636e9cf2c657c736e2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -501,4 +645,4 @@
             }
         }
     }
-            }}}}
+}
