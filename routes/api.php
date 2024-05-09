@@ -62,10 +62,13 @@ Route::prefix('comments')->group(function (){
     // update comment by id
     Route::post('/update/{id}', [CommentsPostController::class, 'update']);
 
-
-
 });
 
+
+// post
+Route::prefix('posts')->group(function (){
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+});
 
 // auth api
 require __DIR__.'/auth.php';
