@@ -8,6 +8,8 @@ use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentsPostController;
+use App\Http\Controllers\FeedbackController;
+use App\Models\Feedback;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +27,9 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 // comment post
 Route::post('/createComment',[CommentsPostController::class,'store']);
+
+// feedback expert 
+Route::post('/feedback',[FeedbackController::class,'createFeedbackExperts']);
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
@@ -44,6 +49,7 @@ Route::prefix('admin')->group(function () {
     Route::put('posts/update-status/{id}',[PostController::class,'updatePostStatus'])->name('admin.post.update.status');
     //booking
     Route::get('/bookings',[BookingController::class,'getAllBookings']);
+    Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
 });
 
 Route::prefix('user')->group(function (){
