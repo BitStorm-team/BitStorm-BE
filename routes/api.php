@@ -24,13 +24,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 
 });
-// comment post
-Route::post('/createComment',[CommentsPostController::class,'store']);
+Route::prefix('comments')->group(function() {
+    Route::post('/createComment',[CommentsPostController::class,'store']);
+    Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
+});
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
-
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
@@ -56,6 +57,12 @@ Route::prefix('expert')->group(function (){
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
+
+// post
+Route::prefix('posts')->group(function (){
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+});
+
 // auth api
 require __DIR__.'/auth.php';
 
