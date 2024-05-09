@@ -5,24 +5,18 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/login": {
+        "/api/createComment": {
             "post": {
-                "tags": [
-                    "authent"
-                ],
-                "summary": "Login to the website",
-                "description": "Login to the website by providing email address and password.",
-                "operationId": "bc76a9d52929cab7a147ca7b5c527430",
+                "tags": ["Comments"],
+                "summary": "Create a new comment post",
+                "description": "Create a new comment post with the provided data",
+                "operationId": "93bf8d6cd5bb5e81c021e1b273215a95",
                 "requestBody": {
-                    "description": "Request body",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
+                                "required": ["email", "password"],
                                 "properties": {
                                     "email": {
                                         "type": "string",
@@ -58,9 +52,7 @@
         },
         "/api/register": {
             "post": {
-                "tags": [
-                    "authent"
-                ],
+                "tags": ["authent"],
                 "summary": "Register to the website",
                 "description": "Register to the website by providing email address, password, name, confirmation password, and role ID.",
                 "operationId": "18235ea6963e661c49bf381065779d6a",
@@ -120,30 +112,9 @@
                 }
             }
         },
-        "/api/admin/bookings": {
-            "get": {
-                "tags": [
-                    "Show Bookings"
-                ],
-                "summary": "Display all bookings from database",
-                "operationId": "e02b626135501ab4454bdf20f953d839",
-                "responses": {
-                    "200": {
-                        "description": "Success"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/admin/comments": {
             "get": {
-                "tags": [
-                    "Comments"
-                ],
+                "tags": ["Comments"],
                 "summary": "Get all comments",
                 "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
                 "responses": {
@@ -164,93 +135,9 @@
                 ]
             }
         },
-        "/api/createComment": {
-            "post": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Create a new comment post",
-                "description": "Create a new comment post with the provided data",
-                "operationId": "93bf8d6cd5bb5e81c021e1b273215a95",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "post_id",
-                                    "user_id",
-                                    "content"
-                                ],
-                                "properties": {
-                                    "post_id": {
-                                        "description": "The ID of the post the comment belongs to",
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "example": "123"
-                                    },
-                                    "user_id": {
-                                        "description": "The ID of the user who posted the comment",
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "example": "456"
-                                    },
-                                    "content": {
-                                        "description": "The content of the comment",
-                                        "type": "string",
-                                        "example": "This is a great post!"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successfully created a comment post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "description": "Indicates whether the request was successful",
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "description": "A message describing the outcome of the request",
-                                            "type": "string",
-                                            "example": "Created comment post successfully!"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request. Invalid input data."
-                    },
-                    "401": {
-                        "description": "Unauthorized. Authentication is required."
-                    },
-                    "500": {
-                        "description": "Internal server error. Failed to create the comment post."
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/admin/contacts": {
             "post": {
-                "tags": [
-                    "update Contact Status"
-                ],
+                "tags": ["update Contact Status"],
                 "summary": "Update contact status",
                 "description": "Update the status of a contact",
                 "operationId": "6168b49f26dc7b7f8c0f185bc9017b70",
@@ -260,10 +147,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "id",
-                                    "status"
-                                ],
+                                "required": ["id", "status"],
                                 "properties": {
                                     "id": {
                                         "type": "integer",
@@ -294,9 +178,7 @@
                 ]
             },
             "delete": {
-                "tags": [
-                    "Show Contacts"
-                ],
+                "tags": ["Show Contacts"],
                 "summary": "Display all contacts from database",
                 "operationId": "66d8ed88aa7e7cf5346962413d6520e0",
                 "responses": {
@@ -313,9 +195,7 @@
         },
         "/api/admin/contacts/{id}": {
             "get": {
-                "tags": [
-                    "Contact Details"
-                ],
+                "tags": ["Contact Details"],
                 "summary": "Get one contact detail ",
                 "operationId": "1a84fbd3f8485f1f01c67c1f0cc02b43",
                 "parameters": [
@@ -347,9 +227,7 @@
                 ]
             },
             "delete": {
-                "tags": [
-                    "Delete Contact"
-                ],
+                "tags": ["Delete Contact"],
                 "summary": "Delete one contact detail",
                 "operationId": "69b59ff29c1e55c5c5f442499d66af5f",
                 "parameters": [
@@ -383,9 +261,7 @@
         },
         "/api/admin/replyEmail": {
             "post": {
-                "tags": [
-                    "Reply Email"
-                ],
+                "tags": ["Reply Email"],
                 "summary": "Reply to email",
                 "description": "Reply to an email with a message",
                 "operationId": "a724ed1bf326e8336d07e21e60aaa0ff",
@@ -395,10 +271,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "email",
-                                    "message"
-                                ],
+                                "required": ["email", "message"],
                                 "properties": {
                                     "email": {
                                         "type": "string",
@@ -435,9 +308,7 @@
         },
         "/api/admin/expertdetail": {
             "get": {
-                "tags": [
-                    "Expert Details"
-                ],
+                "tags": ["Expert Details"],
                 "summary": "Display all expert form database",
                 "operationId": "c8db15f0ed45328925226e269390e71d",
                 "responses": {
@@ -454,9 +325,7 @@
         },
         "/api/expert/{id}": {
             "get": {
-                "tags": [
-                    "Expert Details"
-                ],
+                "tags": ["Expert Details"],
                 "summary": "Get one expert detail ",
                 "operationId": "f53c0436ddae0bf10e566f3f761f825e",
                 "parameters": [
@@ -490,9 +359,7 @@
         },
         "/api/experts": {
             "get": {
-                "tags": [
-                    "Expert Details"
-                ],
+                "tags": ["Expert Details"],
                 "summary": "Display all expert form database and display in the website",
                 "operationId": "af602ec9e1245c085358581af68afd4b",
                 "responses": {
@@ -509,9 +376,7 @@
         },
         "/api/expert/expert-profile/{id}": {
             "get": {
-                "tags": [
-                    "Expert profile"
-                ],
+                "tags": ["Expert profile"],
                 "summary": "Display expert profile",
                 "operationId": "efef67554ddfd2a33fe6cffa0a4e28f6",
                 "parameters": [
@@ -545,9 +410,7 @@
         },
         "/api/user/user-profile/{id}": {
             "get": {
-                "tags": [
-                    "User profile"
-                ],
+                "tags": ["User profile"],
                 "summary": "Display user profile",
                 "operationId": "9b320b2ce93d88e6b4aadb20cec31980",
                 "parameters": [

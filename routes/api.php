@@ -56,17 +56,6 @@ Route::prefix('expert')->group(function (){
 
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
-
-Route::prefix('comments')->group(function (){
-
-    // update comment by id
-    Route::post('/update/{id}', [CommentsPostController::class, 'update']);
-
-
-
-});
-
-
 // auth api
 require __DIR__.'/auth.php';
 
