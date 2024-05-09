@@ -56,6 +56,12 @@ Route::prefix('expert')->group(function (){
 
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
+
+// post
+Route::prefix('posts')->group(function (){
+    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+});
+
 // auth api
 require __DIR__.'/auth.php';
 
