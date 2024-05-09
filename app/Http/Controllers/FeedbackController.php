@@ -28,14 +28,13 @@ class FeedbackController extends Controller
 {
     $validator = Validator::make($request->all(), [
         'booking_id' => 'required',
-        'content' => 'required',
+        'content' => ['required', 'regex:/^\S.*\S$/'],
         'rating' => ['required', 'numeric', 'between:1,5']
     ]);
 
     if ($validator->fails()) {
         return response()->json($validator->errors(), 422);
     }
-
     $data = [
         'booking_id' => $request->booking_id,
         'content' => $request->content,
