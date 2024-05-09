@@ -29,7 +29,7 @@ class FeedbackController extends Controller
     $validator = Validator::make($request->all(), [
         'booking_id' => 'required',
         'content' => 'required',
-        'rating' => 'required|max:5'
+        'rating' => ['required', 'numeric', 'between:1,5']
     ]);
 
     if ($validator->fails()) {
