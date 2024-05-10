@@ -19,6 +19,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     /**
+    * @OA\Get(
+    *     path="/api/admin/users",
+    *     summary="Display all users",
+    *     tags={"List users"},
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function index()
     {
         //
@@ -28,7 +39,6 @@ class UserController extends Controller
             "message" => "Get all users successfully",
             "data" => $users
         ],200);
-
     }
 
     /**
@@ -111,9 +121,34 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     /**
+    * @OA\Put(
+    *     path="/api/admin/users/{id}",
+    *     summary="Update user status",
+    *     tags={"Update user status"},
+    *     @OA\Parameter(
+    *              name="id",
+    *              in="path",
+    *              description="User ID",
+    *              required=true,
+    *              @OA\Schema(type="integer")
+    *      ),
+    *     @OA\Parameter(
+    *              name="status",
+    *              in="query",
+    *              description="Status of the user",
+    *              required=true,
+    *              @OA\Schema(type="boolean")
+    *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
         if(empty($user)){
             return response()->json([
                 'success' => false,
