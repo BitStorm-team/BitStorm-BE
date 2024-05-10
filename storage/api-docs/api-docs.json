@@ -5,14 +5,26 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/login": {
+        "/api/auth/login": {
             "post": {
                 "tags": [
-                    "authent"
+                    "Auth"
                 ],
-                "summary": "Login to the website",
-                "description": "Login to the website by providing email address and password.",
-                "operationId": "bc76a9d52929cab7a147ca7b5c527430",
+                "summary": "Login into the web application",
+                "description": "Log in to the web application",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "parameters": [
+                    {
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "description": "CSRF token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "eyJpdiI6IkFqTEs5enhxUk9vbWVJWVBoMXpPMFE9PSIsInZhbHVlIjoiaEhmL3ZCdXRpVDlYbGlFUFQwL1NJTlMzb1lSdE9UOFNSc0RNZnJ6ZElYbFVseXo5T2lYZ1p0N01MZEh3Nm5MNHl1U1B4NXZObzRzSGd1aUMwSG5PQVorRXAwY1NwTHkwb0RXdWJmQkdBQkwrMkM1Wi9NTjRuL3lZejVoaHllR0UiLCJtYWMiOiIzY2MzNjQ2OGJiMzBlODI4MzY3NWJmODMwZGJkOGFiYzViYTkxM2FkMGE2MzlhYzJhODVmNjllNWEwZDk2NGU1IiwidGFnIjoiIn0="
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Request body",
                     "required": true,
@@ -25,14 +37,14 @@
                                 ],
                                 "properties": {
                                     "email": {
+                                        "description": "Email address",
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "admin@gmail.com"
+                                        "example": "bao12@gmail.com"
                                     },
                                     "password": {
+                                        "description": "Password to login",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "admin@gmail.com"
+                                        "example": "bao12@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -42,30 +54,53 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Login successful"
+                        "description": "Successfully logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Indicates whether the request was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "description": "A message describing the outcome of the request",
+                                            "type": "string",
+                                            "example": "Logged in successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Bad request. Invalid input data."
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized. Authentication is required."
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Internal server error. Failed to log in."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/register": {
+        "/api/auth/register": {
             "post": {
                 "tags": [
-                    "authent"
+                    "Auth"
                 ],
-                "summary": "Register to the website",
-                "description": "Register to the website by providing email address, password, name, confirmation password, and role ID.",
-                "operationId": "18235ea6963e661c49bf381065779d6a",
+                "summary": "Register a new user",
+                "description": "Register a new user with the provided information",
+                "operationId": "d764dd091cc4494ae0baf360b03319f3",
                 "requestBody": {
-                    "description": "Request body",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -74,32 +109,35 @@
                                     "name",
                                     "email",
                                     "password",
-                                    "confirmation_password",
+                                    "password_confirmation",
                                     "role_id"
                                 ],
                                 "properties": {
                                     "name": {
+                                        "description": "User's name",
                                         "type": "string",
                                         "example": "John Doe"
                                     },
                                     "email": {
+                                        "description": "User's email address",
                                         "type": "string",
                                         "format": "email",
-                                        "example": "bao@gmail.com"
+                                        "example": "john@example.com"
                                     },
                                     "password": {
+                                        "description": "User's password (min: 6 characters)",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "bao@gmail.com"
+                                        "example": "password123"
                                     },
-                                    "confirmation_password": {
+                                    "password_confirmation": {
+                                        "description": "Confirmation of the user's password",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "bao@gmail.com"
+                                        "example": "password123"
                                     },
                                     "role_id": {
+                                        "description": "ID of the user's role",
                                         "type": "integer",
-                                        "example": 2
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -108,16 +146,113 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Registration successful"
+                    "201": {
+                        "description": "User successfully registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully registered"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Bad request. Invalid input data."
                     },
-                    "500": {
-                        "description": "Internal server error"
+                    "401": {
+                        "description": "Unauthorized. Authentication is required."
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity. Validation errors occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "The email field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out the authenticated user",
+                "description": "Log out the currently authenticated user",
+                "operationId": "69281b12abb272c76871f19cb17ca563",
+                "responses": {
+                    "200": {
+                        "description": "User successfully signed out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully signed out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Authentication is required."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/bookings": {
+            "get": {
+                "tags": [
+                    "Show Bookings"
+                ],
+                "summary": "Display all bookings from database",
+                "operationId": "e02b626135501ab4454bdf20f953d839",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/admin/bookings": {
@@ -237,6 +372,51 @@
                     },
                     "500": {
                         "description": "Internal server error. Failed to create the comment post."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/deleteComment/{post_id}/{user_id}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete Comment Post",
+                "operationId": "06378d166c7272feda28dc12ed7c9d5e",
+                "parameters": [
+                    {
+                        "name": "post_id",
+                        "in": "path",
+                        "description": "Comment Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
                     }
                 },
                 "security": [
