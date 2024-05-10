@@ -254,6 +254,91 @@
                 ]
             }
         },
+        "/api/user/booking/{user_id}/book-calendar/{calendar_id}": {
+            "post": {
+                "tags": [
+                    "Book calendar"
+                ],
+                "summary": "Book calendar",
+                "operationId": "ca6e21741a79eebff9fc717b851d9be4",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "calendar_id",
+                        "in": "path",
+                        "description": "Calendar ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "note",
+                        "in": "query",
+                        "description": "Note",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "417": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/comments": {
             "get": {
                 "tags": [
@@ -703,6 +788,31 @@
                 ]
             }
         },
+        "/api/admin/users": {
+            "get": {
+                "tags": [
+                    "List users"
+                ],
+                "summary": "Display all users",
+                "operationId": "7682ed8f32d8216884bcdfd052b767cd",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/user/user-profile/{id}": {
             "get": {
                 "tags": [
@@ -718,6 +828,51 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{id}": {
+            "put": {
+                "tags": [
+                    "Update user status"
+                ],
+                "summary": "Update user status",
+                "operationId": "68e1d88237cb8f636e9cf2c657c736e2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
                         }
                     }
                 ],
