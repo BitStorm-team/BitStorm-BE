@@ -78,7 +78,7 @@ class BookingController extends Controller
        $user = $this->getUser($request);
        $userID = $user->id;
         $validator = Validator::make($request->all(), [
-            'note' => 'String', 
+            'note' => 'string', 
         ]);
 
         if ($validator->fails()) {
