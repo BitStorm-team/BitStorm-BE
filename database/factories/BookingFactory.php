@@ -23,7 +23,7 @@ class BookingFactory extends Factory
             'user_id' => $user->id,
             'calendar_id' => $calendar->id,
             'note' => $this->faker->text(100),
-            'status' => $this->faker->boolean(),
+            'status' => 'New',
         ];
     }
 }

@@ -22,6 +22,7 @@ use App\Http\Controllers\CommentsPostController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
+
 });
 // comments
 Route::prefix('comments')->group(function() {
@@ -50,7 +51,7 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->group(function (){
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
-
+    Route::post('book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
 });
 
 Route::prefix('experts')->group(function (){
