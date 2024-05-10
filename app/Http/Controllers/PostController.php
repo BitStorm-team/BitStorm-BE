@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CommentsPost;
 use App\Models\Post;
+use App\Models\CommentsPost;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -31,7 +32,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = $this->getUser($request);
+        $userId = $user->id;
+        // Validate incoming request
+        $request->validate([
+        'content' => 'required|string',
+        'is_anonymous' => 'required|boolean',
+         ]);
+        $data=[
+            'user_id' => $userId,
+            'content'=>$request->content,
+            'is_anonymous'=>$request->is_anonymous,
+        ];
+
+        $post = Post::create($data);
+
+        return response()->json([
+            'success'=>true,
+            'message' => 'Create post successfully', 
+            'post' => $post
+        ], 201);
     }
 
     /**
