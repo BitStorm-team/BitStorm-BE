@@ -24,6 +24,37 @@ class FeedbackController extends Controller
             'data' => $feedbackExperts
         ]);
     }
+/**
+* @OA\Post(
+     *     path="/api/feedback",
+     *     summary="Feedback about a expert",
+     *    tags={"Feedback experts"},
+     *     @OA\Parameter(
+     *         name="booking_id",
+     *         in="query",
+     *         description="Booking Id from booking",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="content",
+     *         in="query",
+     *         description="Content of feedback experts",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="rating",
+     *         in="query",
+     *         description="Rating from 1-5",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response="201", description="User registered successfully"),
+     *     @OA\Response(response="401", description="Not found")
+     * )
+     */
+
     public function createFeedbackExperts(Request $request)
 {
     $validator = Validator::make($request->all(), [
@@ -40,8 +71,8 @@ class FeedbackController extends Controller
         'content' => $request->content,
         'rating' => $request->rating,
     ];
+    $feedbackExpert = $this->feedback->createFeedbackExperts($data);
     try {
-        $feedbackExpert = $this->feedback->createFeedbackExperts($data);
         return response()->json([
             'success' => true,
             'message' => "Created feedback experts successfully",
