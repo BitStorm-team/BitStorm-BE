@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -22,10 +23,9 @@ use App\Http\Controllers\CommentsPostController;
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
-
 });
-Route::prefix('comments')->group(function() {
-    Route::post('/createComment',[CommentsPostController::class,'store']);
+Route::prefix('comments')->group(function () {
+    Route::post('/createComment', [CommentsPostController::class, 'store']);
     Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
 });
 // Post 
@@ -39,33 +39,31 @@ Route::prefix('admin')->group(function () {
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
     // contact
     Route::get('/contacts', [ContactController::class, 'getAllContacts']);
-    Route::get('/contacts/{id}',[ContactController::class,'getContactDetail']);
+    Route::get('/contacts/{id}', [ContactController::class, 'getContactDetail']);
     Route::post('/replyEmail', [ContactController::class, 'replyEmail']);
-    Route::post('/contacts',[ContactController::class,'updateContactStatus']);
-    Route::delete('/contacts/{id}',[ContactController::class,'deleteContact']);
+    Route::post('/contacts', [ContactController::class, 'updateContactStatus']);
+    Route::delete('/contacts/{id}', [ContactController::class, 'deleteContact']);
     //post
-    Route::apiResource('posts',PostController::class);
-    Route::put('posts/update-status/{id}',[PostController::class,'updatePostStatus'])->name('admin.post.update.status');
+    Route::apiResource('posts', PostController::class);
+    Route::put('posts/update-status/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
     //booking
-    Route::get('/bookings',[BookingController::class,'getAllBookings']);
+    Route::get('/bookings', [BookingController::class, 'getAllBookings']);
 });
 
-Route::prefix('user')->group(function (){
+Route::prefix('user')->group(function () {
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
     Route::post('book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
 });
 
-Route::prefix('expert')->group(function (){
+Route::prefix('expert')->group(function () {
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
 
 // post
-Route::prefix('posts')->group(function (){
+Route::prefix('posts')->group(function () {
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
 });
 
 // auth api
-require __DIR__.'/auth.php';
-
-
+require __DIR__ . '/auth.php';

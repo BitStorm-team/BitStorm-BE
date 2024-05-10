@@ -32,22 +32,26 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // $userId=Auth::user()->id;
+        $user = $this->getUser($request);
+        $userId = $user->id;
         // Validate incoming request
-    $request->validate([
-
+        $request->validate([
         'content' => 'required|string',
         'is_anonymous' => 'required|boolean',
-    ]);
-    $data=[
-            // 'user_id' => $userId,
-            'content'=>$request->name,
-            'is_anonymous'=>$request->isAnonymous,
+         ]);
+        $data=[
+            'user_id' => $userId,
+            'content'=>$request->content,
+            'is_anonymous'=>$request->is_anonymous,
         ];
 
-    $post = Post::create($data);
+        $post = Post::create($data);
 
-    return response()->json(['message' => 'Bài viết đã được tạo thành công', 'post' => $post], 201);
+        return response()->json([
+            'success'=>true,
+            'message' => 'Create post successfully', 
+            'post' => $post
+        ], 201);
     }
 
     /**
