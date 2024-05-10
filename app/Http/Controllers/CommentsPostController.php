@@ -128,6 +128,45 @@ class CommentsPostController extends Controller
      * @param  \App\Models\CommentsPost  $commentsPost
      * @return \Illuminate\Http\Response
      */
+    /**
+     * @OA\Post(
+     *    path="/api/comments/update/{id}",
+     *      tags={"Comments"},
+     *      summary="Update a comment post by ID",
+     *      description="Update a comment post by its ID",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Request body",
+     *        @OA\JsonContent(
+     *              required={"content", "status"},
+     *              @OA\Property(property="content", type="string", example="Updated comment content", description="Content of the comment post"),
+     *              @OA\Property(property="status", type="integer", example=1, description="Status of the comment post"),
+     *          )
+     *     ),
+     *    @OA\Response(
+     *          response=400,
+     *          description="Validation error. Invalid input data."
+     *      ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Not found. The comment post with the specified ID does not exist."
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error. Failed to update the comment post."
+     *      ),
+     *     security={{"bearerAuth":{}}},
+     *     @OA\SecurityScheme(
+     *         securityScheme="X-CSRF-TOKEN",
+     *         type="apiKey",
+     *         in="header",
+     *         name="X-CSRF-TOKEN",
+     *         description="CSRF Token"
+     *     )
+     * )
+     */
+
+
     public function update(Request $request, CommentsPost $commentsPost, $id)
     {
         try {
@@ -175,40 +214,40 @@ class CommentsPostController extends Controller
      * @param  \App\Models\CommentsPost  $commentsPost
      * @return \Illuminate\Http\Response
      */
-/**
- * @OA\Delete(
- *     path="/api/deleteComment/{post_id}/{user_id}",
- *     summary="Delete Comment Post",
- *     tags={"Comments"},
- *     @OA\Parameter(
- *         name="post_id",
- *         in="path",
- *         description="Comment Post ID",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="user_id",
- *         in="path",
- *         description="User ID",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(response=200, description="Success"),
- *     @OA\Response(response=404, description="Comment not found"),
- *     @OA\Response(response=500, description="Internal Server Error"),
- *     security={{"bearerAuth":{}}}
- * )
- */
+    /**
+     * @OA\Delete(
+     *     path="/api/deleteComment/{post_id}/{user_id}",
+     *     summary="Delete Comment Post",
+     *     tags={"Comments"},
+     *     @OA\Parameter(
+     *         name="post_id",
+     *         in="path",
+     *         description="Comment Post ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user_id",
+     *         in="path",
+     *         description="User ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=404, description="Comment not found"),
+     *     @OA\Response(response=500, description="Internal Server Error"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
 
     public function destroy(Request $commentsPost)
     {
         $post_id = $commentsPost->post_id;
         $user_id = $commentsPost->user_id;
         $comment = CommentsPost::where('post_id', $post_id)
-                                ->where('user_id', $user_id)
-                                ->first();   
-        if($comment) {
+            ->where('user_id', $user_id)
+            ->first();
+        if ($comment) {
             $comment->delete();
             return response()->json([
                 'success' => true,
@@ -221,5 +260,4 @@ class CommentsPostController extends Controller
             ], 404);
         }
     }
-    
 }
