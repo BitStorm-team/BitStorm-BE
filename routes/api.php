@@ -27,6 +27,8 @@ Route::prefix('comments')->group(function() {
     Route::post('/createComment',[CommentsPostController::class,'store']);
     Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
 });
+// Post 
+    Route::post('/posts/create',[PostController::class,'store']);
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {

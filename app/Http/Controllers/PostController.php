@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CommentsPost;
 use App\Models\Post;
+use App\Models\CommentsPost;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -31,7 +32,22 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $userId=Auth::user()->id;
+        // Validate incoming request
+    $request->validate([
+
+        'content' => 'required|string',
+        'is_anonymous' => 'required|boolean',
+    ]);
+    $data=[
+            // 'user_id' => $userId,
+            'content'=>$request->name,
+            'is_anonymous'=>$request->isAnonymous,
+        ];
+
+    $post = Post::create($data);
+
+    return response()->json(['message' => 'Bài viết đã được tạo thành công', 'post' => $post], 201);
     }
 
     /**
