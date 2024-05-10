@@ -23,12 +23,13 @@ use App\Http\Controllers\CommentsPostController;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+// comments
 Route::prefix('comments')->group(function() {
+    Route::post('/update/{id}', [CommentsPostController::class, 'update']);
     Route::post('/createComment',[CommentsPostController::class,'store']);
     Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
 });
 // admin routes
-Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
@@ -52,17 +53,10 @@ Route::prefix('user')->group(function (){
 
 });
 
-Route::prefix('expert')->group(function (){
+Route::prefix('experts')->group(function (){
+    Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
-
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
-});
-
-Route::prefix('comments')->group(function (){
-
-    // update comment by id
-    Route::post('/update/{id}', [CommentsPostController::class, 'update']);
-
 });
 
 
