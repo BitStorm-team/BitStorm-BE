@@ -5,28 +5,45 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/api/createComment": {
+        "/api/auth/login": {
             "post": {
-                "tags": ["Comments"],
-                "summary": "Create a new comment post",
-                "description": "Create a new comment post with the provided data",
-                "operationId": "93bf8d6cd5bb5e81c021e1b273215a95",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login into the web application",
+                "description": "Log in to the web application",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "parameters": [
+                    {
+                        "name": "X-CSRF-TOKEN",
+                        "in": "header",
+                        "description": "CSRF token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "eyJpdiI6IkFqTEs5enhxUk9vbWVJWVBoMXpPMFE9PSIsInZhbHVlIjoiaEhmL3ZCdXRpVDlYbGlFUFQwL1NJTlMzb1lSdE9UOFNSc0RNZnJ6ZElYbFVseXo5T2lYZ1p0N01MZEh3Nm5MNHl1U1B4NXZObzRzSGd1aUMwSG5PQVorRXAwY1NwTHkwb0RXdWJmQkdBQkwrMkM1Wi9NTjRuL3lZejVoaHllR0UiLCJtYWMiOiIzY2MzNjQ2OGJiMzBlODI4MzY3NWJmODMwZGJkOGFiYzViYTkxM2FkMGE2MzlhYzJhODVmNjllNWEwZDk2NGU1IiwidGFnIjoiIn0="
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["email", "password"],
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
                                 "properties": {
                                     "email": {
+                                        "description": "Email address",
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "admin@gmail.com"
+                                        "example": "bao12@gmail.com"
                                     },
                                     "password": {
+                                        "description": "Password to login",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "admin@gmail.com"
+                                        "example": "bao12@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -36,28 +53,53 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Login successful"
+                        "description": "Successfully logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Indicates whether the request was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "description": "A message describing the outcome of the request",
+                                            "type": "string",
+                                            "example": "Logged in successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Bad request. Invalid input data."
                     },
                     "401": {
-                        "description": "Unauthorized"
+                        "description": "Unauthorized. Authentication is required."
                     },
                     "500": {
-                        "description": "Internal server error"
+                        "description": "Internal server error. Failed to log in."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/api/register": {
+        "/api/auth/register": {
             "post": {
-                "tags": ["authent"],
-                "summary": "Register to the website",
-                "description": "Register to the website by providing email address, password, name, confirmation password, and role ID.",
-                "operationId": "18235ea6963e661c49bf381065779d6a",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user with the provided information",
+                "operationId": "d764dd091cc4494ae0baf360b03319f3",
                 "requestBody": {
-                    "description": "Request body",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -66,32 +108,35 @@
                                     "name",
                                     "email",
                                     "password",
-                                    "confirmation_password",
+                                    "password_confirmation",
                                     "role_id"
                                 ],
                                 "properties": {
                                     "name": {
+                                        "description": "User's name",
                                         "type": "string",
                                         "example": "John Doe"
                                     },
                                     "email": {
+                                        "description": "User's email address",
                                         "type": "string",
                                         "format": "email",
-                                        "example": "bao@gmail.com"
+                                        "example": "john@example.com"
                                     },
                                     "password": {
+                                        "description": "User's password (min: 6 characters)",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "bao@gmail.com"
+                                        "example": "password123"
                                     },
-                                    "confirmation_password": {
+                                    "password_confirmation": {
+                                        "description": "Confirmation of the user's password",
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "bao@gmail.com"
+                                        "example": "password123"
                                     },
                                     "role_id": {
+                                        "description": "ID of the user's role",
                                         "type": "integer",
-                                        "example": 2
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -100,21 +145,120 @@
                     }
                 },
                 "responses": {
-                    "200": {
-                        "description": "Registration successful"
+                    "201": {
+                        "description": "User successfully registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully registered"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Bad request. Invalid input data."
                     },
-                    "500": {
-                        "description": "Internal server error"
+                    "401": {
+                        "description": "Unauthorized. Authentication is required."
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity. Validation errors occurred.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "The email field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out the authenticated user",
+                "description": "Log out the currently authenticated user",
+                "operationId": "69281b12abb272c76871f19cb17ca563",
+                "responses": {
+                    "200": {
+                        "description": "User successfully signed out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User successfully signed out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized. Authentication is required."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/bookings": {
+            "get": {
+                "tags": [
+                    "Show Bookings"
+                ],
+                "summary": "Display all bookings from database",
+                "operationId": "e02b626135501ab4454bdf20f953d839",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/admin/comments": {
             "get": {
-                "tags": ["Comments"],
+                "tags": [
+                    "Comments"
+                ],
                 "summary": "Get all comments",
                 "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
                 "responses": {
@@ -126,6 +270,88 @@
                     },
                     "404": {
                         "description": "Resource Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/createComment": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create a new comment post",
+                "description": "Create a new comment post with the provided data",
+                "operationId": "93bf8d6cd5bb5e81c021e1b273215a95",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "post_id",
+                                    "user_id",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "post_id": {
+                                        "description": "The ID of the post the comment belongs to",
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "example": "123"
+                                    },
+                                    "user_id": {
+                                        "description": "The ID of the user who posted the comment",
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "example": "456"
+                                    },
+                                    "content": {
+                                        "description": "The content of the comment",
+                                        "type": "string",
+                                        "example": "This is a great post!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully created a comment post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "description": "Indicates whether the request was successful",
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "description": "A message describing the outcome of the request",
+                                            "type": "string",
+                                            "example": "Created comment post successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request. Invalid input data."
+                    },
+                    "401": {
+                        "description": "Unauthorized. Authentication is required."
+                    },
+                    "500": {
+                        "description": "Internal server error. Failed to create the comment post."
                     }
                 },
                 "security": [
@@ -182,7 +408,9 @@
         },
         "/api/admin/contacts": {
             "post": {
-                "tags": ["update Contact Status"],
+                "tags": [
+                    "update Contact Status"
+                ],
                 "summary": "Update contact status",
                 "description": "Update the status of a contact",
                 "operationId": "6168b49f26dc7b7f8c0f185bc9017b70",
@@ -192,7 +420,10 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["id", "status"],
+                                "required": [
+                                    "id",
+                                    "status"
+                                ],
                                 "properties": {
                                     "id": {
                                         "type": "integer",
@@ -223,7 +454,9 @@
                 ]
             },
             "delete": {
-                "tags": ["Show Contacts"],
+                "tags": [
+                    "Show Contacts"
+                ],
                 "summary": "Display all contacts from database",
                 "operationId": "66d8ed88aa7e7cf5346962413d6520e0",
                 "responses": {
@@ -240,7 +473,9 @@
         },
         "/api/admin/contacts/{id}": {
             "get": {
-                "tags": ["Contact Details"],
+                "tags": [
+                    "Contact Details"
+                ],
                 "summary": "Get one contact detail ",
                 "operationId": "1a84fbd3f8485f1f01c67c1f0cc02b43",
                 "parameters": [
@@ -272,7 +507,9 @@
                 ]
             },
             "delete": {
-                "tags": ["Delete Contact"],
+                "tags": [
+                    "Delete Contact"
+                ],
                 "summary": "Delete one contact detail",
                 "operationId": "69b59ff29c1e55c5c5f442499d66af5f",
                 "parameters": [
@@ -306,7 +543,9 @@
         },
         "/api/admin/replyEmail": {
             "post": {
-                "tags": ["Reply Email"],
+                "tags": [
+                    "Reply Email"
+                ],
                 "summary": "Reply to email",
                 "description": "Reply to an email with a message",
                 "operationId": "a724ed1bf326e8336d07e21e60aaa0ff",
@@ -316,7 +555,10 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": ["email", "message"],
+                                "required": [
+                                    "email",
+                                    "message"
+                                ],
                                 "properties": {
                                     "email": {
                                         "type": "string",
@@ -353,7 +595,9 @@
         },
         "/api/admin/expertdetail": {
             "get": {
-                "tags": ["Expert Details"],
+                "tags": [
+                    "Expert Details"
+                ],
                 "summary": "Display all expert form database",
                 "operationId": "c8db15f0ed45328925226e269390e71d",
                 "responses": {
@@ -370,7 +614,9 @@
         },
         "/api/expert/{id}": {
             "get": {
-                "tags": ["Expert Details"],
+                "tags": [
+                    "Expert Details"
+                ],
                 "summary": "Get one expert detail ",
                 "operationId": "f53c0436ddae0bf10e566f3f761f825e",
                 "parameters": [
@@ -404,7 +650,9 @@
         },
         "/api/experts": {
             "get": {
-                "tags": ["Expert Details"],
+                "tags": [
+                    "Expert Details"
+                ],
                 "summary": "Display all expert form database and display in the website",
                 "operationId": "af602ec9e1245c085358581af68afd4b",
                 "responses": {
@@ -421,7 +669,9 @@
         },
         "/api/expert/expert-profile/{id}": {
             "get": {
-                "tags": ["Expert profile"],
+                "tags": [
+                    "Expert profile"
+                ],
                 "summary": "Display expert profile",
                 "operationId": "efef67554ddfd2a33fe6cffa0a4e28f6",
                 "parameters": [
@@ -455,7 +705,9 @@
         },
         "/api/user/user-profile/{id}": {
             "get": {
-                "tags": ["User profile"],
+                "tags": [
+                    "User profile"
+                ],
                 "summary": "Display user profile",
                 "operationId": "9b320b2ce93d88e6b4aadb20cec31980",
                 "parameters": [
