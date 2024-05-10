@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Auth;
+use JWTAuth;
 class BookingController extends Controller
 {
     /**
@@ -66,17 +67,16 @@ class BookingController extends Controller
     *     @OA\Response(response="200", description="Success", @OA\JsonContent()),
     *     @OA\Response(response="400", description="Bad request", @OA\JsonContent()),
     *     @OA\Response(response="401", description="Unauthorized", @OA\JsonContent()),
-    *     @OA\Response(response="403", description="Forbidden", @OA\JsonContent()),
     *     @OA\Response(response="404", description="Not Found", @OA\JsonContent()),
-    *     @OA\Response(response="422", description="Unprocessable Entity", @OA\JsonContent()),
-    *     @OA\Response(response="500", description="Internal Server Error", @OA\JsonContent()),
+    *     @OA\Response(response="417", description="Not Found", @OA\JsonContent()),
      *    security={{"bearerAuth":{}}}
      * )
      */
-    public function BookCalendar(Request $request, $userID, $calendarID){
-        $calendar = Calendar::find($calendarID);
-        $user = User::find($userID);
-        
+    public function bookCalendar(Request $request, $calendarID){
+       $calendar = Calendar::find($calendarID);
+
+       $user = $this->getUser($request);
+       $userID = $user->id;
         $validator = Validator::make($request->all(), [
             'note' => 'String', 
         ]);
@@ -86,7 +86,7 @@ class BookingController extends Controller
                 'success' => false,
                 'message' => $validator->errors()->first(),
                 'data' => null
-            ], 422); //Unprocessable Entity
+            ], 400); //Bad request
         }
 
         if (!$calendar) {
@@ -98,7 +98,7 @@ class BookingController extends Controller
         }
     
         // Kiểm tra nếu lịch đã được đặt bởi người dùng khác
-        if($calendar->status == 1){
+        if($calendar->status == 0){
             return response()->json([
                 'success' => false,
                 'message' => 'This calendar has already been booked by other users!',
@@ -112,21 +112,21 @@ class BookingController extends Controller
                 'success' => false,
                 'message' => 'You are not authorized to book the calendar!',
                 'data' => null
-            ], 403);
+            ], 401);
         }
         
         $booking = new Booking();
-        $booking->user_id = $userID;; 
+        $booking->user_id = $userID; 
         $booking->calendar_id = $calendarID;
         $booking->note = $request->note;
-        $booking->status = 1;
+        $booking->status = 'Wait for acceptance';
         
         if ($booking->save()) {
-            $calendar->status = 1;
+            $calendar->status = 0;
             $calendar->save();
             return response()->json([
                 'success' => true,
-                'message' => 'Book schedule successfully!',
+                'message' => 'Book calendar successfully!',
                 'data' => $booking
             ], 200);
         } else {
@@ -134,7 +134,7 @@ class BookingController extends Controller
                 'success' => false,
                 'message' => 'Scheduling failed',
                 'data' => null
-            ], 500);
+            ], 417);
         }
     }
 }

@@ -50,7 +50,7 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('user')->group(function (){
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
-    Route::post('booking/{user_id}/book-calendar/{calendar_id}', [BookingController::class, 'BookCalendar'])->name('user.book.calendar');
+    Route::post('book-calendar/{calendar_id}', [BookingController::class, 'BookCalendar'])->name('user.book.calendar');
 });
 
 Route::prefix('expert')->group(function (){
