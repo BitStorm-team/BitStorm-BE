@@ -22,3 +22,4 @@ Route::get('/expert/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 Route::get('/bookings', [BookingController::class, 'getAllBookings']);
 
 
+

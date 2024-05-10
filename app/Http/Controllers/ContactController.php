@@ -19,7 +19,7 @@ class ContactController extends Controller
     public $rules = [
         'email' => 'required|email',
         'message' => 'required|string',
-        'status' => 'required|boolean',
+        'status' => 'required',
     ];
 
     // Định nghĩa thông điệp validation
@@ -28,6 +28,7 @@ class ContactController extends Controller
         'email.email' => 'The email must be a valid email address.',
         'message.required' => 'The message field is required.',
         'message.string' => 'The message must be a string.',
+        'status.required' => 'The status field is required.',
     ];
     /**
      * @OA\Delete(
@@ -118,7 +119,10 @@ class ContactController extends Controller
  */
     public function replyEmail(Request $request)
     {   
-        $validator = Validator::make($request->all(), $this->rules, $this->messages);
+        $validator = Validator::make($request->only('email', 'message'), [
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ], $this->messages);
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -270,7 +274,10 @@ class ContactController extends Controller
      * )
      */
     public function contactUs(Request $request) {
-        $validator = Validator::make($request->all(), $this->rules, $this->messages);
+        $validator = Validator::make($request->only('email', 'message'), [
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ], $this->messages);
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
