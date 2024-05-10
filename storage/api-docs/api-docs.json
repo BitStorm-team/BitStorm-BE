@@ -135,6 +135,51 @@
                 ]
             }
         },
+        "/api/deleteComment/{post_id}/{user_id}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete Comment Post",
+                "operationId": "06378d166c7272feda28dc12ed7c9d5e",
+                "parameters": [
+                    {
+                        "name": "post_id",
+                        "in": "path",
+                        "description": "Comment Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/contacts": {
             "post": {
                 "tags": ["update Contact Status"],
