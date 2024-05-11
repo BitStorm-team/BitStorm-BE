@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Booking;
 use App\Models\CommentsPost;
 use App\Models\ExpertDetail;
 use Illuminate\Database\Seeder;
@@ -27,6 +28,8 @@ class DatabaseSeeder extends Seeder
             PostSeeder::class,
             CommentsPostSeeder::class,
             RepliesPostSeeder::class,
+            CalendarSeeder::class,
+            BookingSeeder::class
         ]);
 
     }

@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Calendar;
 use App\Models\User;
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contact>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Booking>
  */
-class ContactFactory extends Factory
+class BookingFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +18,12 @@ class ContactFactory extends Factory
     public function definition()
     {
         $user = User::where('role_id', 2)->inRandomOrder()->firstOrFail();
+        $calendar = Calendar::inRandomOrder()->firstOrFail();
         return [
-            'content' => $this->faker->sentence,
             'user_id' => $user->id,
-            'email' => $this->faker->safeEmail,
+            'calendar_id' => $calendar->id,
+            'note' => $this->faker->text(100),
+            'status' => 'New',
         ];
     }
 }

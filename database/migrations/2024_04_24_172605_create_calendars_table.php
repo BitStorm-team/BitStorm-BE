@@ -13,16 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contacts', function (Blueprint $table) {
+        Schema::create('calendars', function (Blueprint $table) {
             $table->id();
-            $table->text('content');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->boolean('status')->default(0);
-            $table->string('email');
+            $table->bigInteger('expert_id')->unsigned();
+            $table->timestamp('start_time')->nullable(); // Allows NULL values
+            $table->timestamp('end_time')->nullable(); // Allows NULL values
+            $table->decimal('price', 8, 2);
+            $table->text('describe');
+            $table->boolean('status');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
@@ -31,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contacts');
+        Schema::dropIfExists('calendars');
     }
 };

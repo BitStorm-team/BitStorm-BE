@@ -8,21 +8,37 @@ use App\Models\User;
 
 class UserController extends Controller
 {
+    protected $user;
+
+    public function __construct()
+    {
+        $this->user = new User();
+    }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+     /**
+    * @OA\Get(
+    *     path="/api/admin/users",
+    *     summary="Display all users",
+    *     tags={"List users"},
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
      */
     public function index()
     {
         //
         $users = User::all();
         return response()->json([
-            "users" => $users,
-            "status" => 200,
-            "message" => "Get all users successfully"
-        ]);
-
+            "success" => true,
+            "message" => "Get all users successfully",
+            "data" => $users
+        ],200);
     }
 
     /**
@@ -52,11 +68,41 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+    * @OA\Get(
+    *     path="/api/user/user-profile/{id}",
+    *     summary="Display user profile",
+    *     tags={"User profile"},
+    *     @OA\Parameter(
+    *              name="id",
+    *              in="path",
+    *              description="User ID",
+    *              required=true,
+    *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function show($id)
     {
         //
+        $user = $this->user::where('role_id','=',2)->find($id);
+        if(empty($user)){
+            return response()->json([
+                'success' => false,
+                'message' => 'user ID not found',
+                'data'=> null,
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Show profile user successfully!',
+            'data' => $user,
+        ], 200);
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -75,14 +121,47 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     /**
+    * @OA\Put(
+    *     path="/api/admin/users/{id}",
+    *     summary="Update user status",
+    *     tags={"Update user status"},
+    *     @OA\Parameter(
+    *              name="id",
+    *              in="path",
+    *              description="User ID",
+    *              required=true,
+    *              @OA\Schema(type="integer")
+    *      ),
+    *     @OA\Parameter(
+    *              name="status",
+    *              in="query",
+    *              description="Status of the user",
+    *              required=true,
+    *              @OA\Schema(type="boolean")
+    *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::find($id);
+        if(empty($user)){
+            return response()->json([
+                'success' => false,
+                'message' => 'user ID not found',
+                'data'=> null,
+            ], 404);
+        }
         $user->status = $request->input('status');
         $user->save();
         return response()->json([
+            'success' => true,
             'message' => 'User status updated successfully',
-            'user' => $user
+            'data' => $user,
         ], 200);
     }
 

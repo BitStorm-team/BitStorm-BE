@@ -4,10 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Contact;
-use App\Models\User;
 
-class ContactSeeder extends Seeder
+class BookingSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +14,6 @@ class ContactSeeder extends Seeder
      */
     public function run()
     {
-        // Tạo 10 liên hệ giả định
-        Contact::factory()->count(15)->create();
+        \App\Models\Booking::factory(10)->create();
     }
 }
