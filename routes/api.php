@@ -26,7 +26,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 Route::prefix('comments')->group(function () {
     Route::post('/createComment', [CommentsPostController::class, 'store']);
-    Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
+    Route::delete('/deleteComment/{post_id}', [CommentsPostController::class, 'destroy']);
 });
 // Post 
     Route::post('/posts/create',[PostController::class,'store']);
