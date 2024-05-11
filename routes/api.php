@@ -25,16 +25,14 @@ use App\Models\Feedback;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-// comment post
-Route::post('/createComment',[CommentsPostController::class,'store']);
-
-// feedback expert 
-Route::post('/feedback',[FeedbackController::class,'createFeedbackExperts']);
+Route::prefix('comments')->group(function() {
+    Route::post('/createComment',[CommentsPostController::class,'store']);
+    Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
+});
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
-
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');

@@ -134,8 +134,51 @@ class CommentsPostController extends Controller
      * @param  \App\Models\CommentsPost  $commentsPost
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CommentsPost $commentsPost)
+/**
+ * @OA\Delete(
+ *     path="/api/deleteComment/{post_id}/{user_id}",
+ *     summary="Delete Comment Post",
+ *     tags={"Comments"},
+ *     @OA\Parameter(
+ *         name="post_id",
+ *         in="path",
+ *         description="Comment Post ID",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="user_id",
+ *         in="path",
+ *         description="User ID",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="Success"),
+ *     @OA\Response(response=404, description="Comment not found"),
+ *     @OA\Response(response=500, description="Internal Server Error"),
+ *     security={{"bearerAuth":{}}}
+ * )
+ */
+
+    public function destroy(Request $commentsPost)
     {
-        //
+        $post_id = $commentsPost->post_id;
+        $user_id = $commentsPost->user_id;
+        $comment = CommentsPost::where('post_id', $post_id)
+                                ->where('user_id', $user_id)
+                                ->first();   
+        if($comment) {
+            $comment->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Deleted successfully',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'post_id or user_id not found',
+            ], 404);
+        }
     }
+    
 }
