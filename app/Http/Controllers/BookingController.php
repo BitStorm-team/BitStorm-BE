@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\isEmpty;
 use App\Models\Calendar;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
-use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Auth;
 use JWTAuth;
 class BookingController extends Controller
