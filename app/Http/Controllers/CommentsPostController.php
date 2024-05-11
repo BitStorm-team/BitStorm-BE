@@ -83,7 +83,6 @@ class CommentsPostController extends Controller
  *      )
  * )
  */
-
     public function store(Request $request)
     {
         $user = $this->getUser($request);
