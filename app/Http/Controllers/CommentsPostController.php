@@ -93,6 +93,7 @@ class CommentsPostController extends Controller
         if ($validator->fails()) {
           return response()->json($validator->errors(), 422);
         }
+        
         $data = [
             'post_id' => $request->post_id,
             'user_id' => $userID,
