@@ -29,7 +29,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::prefix('comments')->group(function () {
     Route::post('/createComment', [CommentsPostController::class, 'store']);
     Route::delete('/deleteComment/{post_id}', [CommentsPostController::class, 'destroy']);
-    
+
 });
 // Post 
     Route::post('/posts/create',[PostController::class,'store']);
@@ -53,7 +53,7 @@ Route::prefix('admin')->group(function () {
     Route::get('/bookings',[BookingController::class,'getAllBookings']);
 });
 Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
-Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExperts']);
+Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExpert']);
 
 Route::prefix('user')->group(function () {
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');

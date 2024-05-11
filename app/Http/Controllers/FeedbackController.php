@@ -55,7 +55,7 @@ class FeedbackController extends Controller
      * )
      */
 
-    public function createFeedbackExperts(Request $request)
+    public function createFeedbackExpert(Request $request)
 {
     $user = $this->getUser($request);
     $validator = Validator::make($request->all(), [
