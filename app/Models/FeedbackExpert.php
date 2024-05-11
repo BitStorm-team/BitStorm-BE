@@ -16,10 +16,5 @@ class FeedbackExpert extends Model
     {
         return $this->belongsTo(Booking::class,'booking_id');
     }
-    public function createFeedbackExperts($data)
-    {
-        $feedback = DB::table('feedback_experts')->insert($data);
-        return $feedback;
-    }
     
 }

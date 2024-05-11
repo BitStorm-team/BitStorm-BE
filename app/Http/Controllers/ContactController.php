@@ -9,12 +9,27 @@ use App\Models\User;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Validator;
 
 use function PHPUnit\Framework\isEmpty;
 
 class ContactController extends Controller
 {   
+    // Định nghĩa quy tắc validation
+    public $rules = [
+        'email' => 'required|email',
+        'message' => 'required|string',
+        'status' => 'required',
+    ];
+
+    // Định nghĩa thông điệp validation
+    public $messages = [
+        'email.required' => 'The email field is required.',
+        'email.email' => 'The email must be a valid email address.',
+        'message.required' => 'The message field is required.',
+        'message.string' => 'The message must be a string.',
+        'status.required' => 'The status field is required.',
+    ];
     /**
      * @OA\Delete(
      *     path="/api/admin/contacts",
@@ -80,6 +95,7 @@ class ContactController extends Controller
             ],404);
         }
     }
+
     /**
  * @OA\Post(
  *     path="/api/admin/replyEmail",
@@ -102,28 +118,39 @@ class ContactController extends Controller
  * )
  */
     public function replyEmail(Request $request)
-    {
-        $user_mail = $request->email;
-        $subject = 'Email reply your contact';
-        $body = $request->message;
-        try{
-            Mail::to($user_mail)->send(new SendMail($subject, $body));
-            return response()->json(
-                [
-                    'success' => true,
-                    'message' => 'Email sent successfully',
-                    'data' => [
-                        'email' => $user_mail,
-                        'subject' => $subject,
-                        'body' => $body,
-                    ],
-                ],200
-            );
-        }catch(Exception $e){
+    {   
+        $validator = Validator::make($request->only('email', 'message'), [
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ], $this->messages);
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error sending email: ' . $e->getMessage(),
-            ],500);
+                'message' => $validator->errors()->first(),
+            ], 400);
+        }else{
+            $user_mail = $request->email;
+            $subject = 'Email reply your contact';
+            $body = $request->message;
+            try{
+                Mail::to($user_mail)->send(new SendMail($subject, $body));
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' => 'Email sent successfully',
+                        'data' => [
+                            'email' => $user_mail,
+                            'subject' => $subject,
+                            'body' => $body,
+                        ],
+                    ],200
+                );
+            }catch(Exception $e){
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error sending email: ' . $e->getMessage(),
+                ],500);
+            }
         }
     }
     /**
@@ -205,4 +232,83 @@ class ContactController extends Controller
             ],404);
         }
     }
+    /**
+     * @OA\Post(
+     *     path="/api/contactUs",
+     *     summary="Contact Us",
+     *     description="Saves contact information",
+     *     tags={"Contact"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "message"},
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="message", type="string", example="This is a message from a user."),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contact information saved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example="true"),
+     *             @OA\Property(property="message", type="string", example="Contact information saved successfully"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example="false"),
+     *             @OA\Property(property="message", type="string", example="Please log in to send the email"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example="false"),
+     *             @OA\Property(property="message", type="string", example="Error saving contact information: Internal Server Error"),
+     *         ),
+     *     ),
+     * )
+     */
+    public function contactUs(Request $request) {
+        $validator = Validator::make($request->only('email', 'message'), [
+            'email' => 'required|email',
+            'message' => 'required|string',
+        ], $this->messages);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 400);
+        }else{
+            $user = Auth::user();
+            if ($user) {
+                try {
+                    $contact = new Contact();
+                    $contact->user_id = $user->id;
+                    $contact->email = $request->email;
+                    $contact->content = $request->message;
+                    $contact->save();
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Your message has been sent successfully. We will respond as soon as possible.',
+                    ], 200);
+                } catch(Exception $e) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Error saving contact information: ' . $e->getMessage(),
+                    ], 500);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please log in to send the email',
+                ], 401);
+            }
+        }
+    }    
+    
 }

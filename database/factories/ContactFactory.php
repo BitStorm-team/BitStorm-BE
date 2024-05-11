@@ -20,6 +20,7 @@ class ContactFactory extends Factory
         return [
             'content' => $this->faker->sentence,
             'user_id' => $user->id,
+            'email' => $this->faker->safeEmail,
         ];
     }
 }

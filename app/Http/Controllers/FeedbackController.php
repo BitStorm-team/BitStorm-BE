@@ -6,9 +6,9 @@ use App\Models\Feedback;
 use App\Models\Feedback_Expert;
 use App\Models\FeedbackExpert;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
-
 class FeedbackController extends Controller
 {   
     protected $feedback;
@@ -57,6 +57,7 @@ class FeedbackController extends Controller
 
     public function createFeedbackExperts(Request $request)
 {
+    $user = $this->getUser($request);
     $validator = Validator::make($request->all(), [
         'booking_id' => 'required',
         'content' => ['required', 'regex:/^\S.*\S$/'],
@@ -71,12 +72,16 @@ class FeedbackController extends Controller
         'content' => $request->content,
         'rating' => $request->rating,
     ];
-    $feedbackExpert = $this->feedback->createFeedbackExperts($data);
+    $feedbackExpert = DB::table('feedback_experts')->insert($data);
     try {
         return response()->json([
             'success' => true,
             'message' => "Created feedback experts successfully",
-            'data' => $feedbackExpert
+            'data' => [
+                $feedbackExpert,
+                $data,
+                $user
+            ]
         ]);
     } catch (\Exception $e) {
         return response()->json([

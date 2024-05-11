@@ -14,12 +14,12 @@ class ExpertDetail extends Model
         return $experts;
     }
     public function getExpertProfile($id){
-        $expert = User::with('experts')->where('role_id','=',3)->find($id);
+        $expert = User::with('expert')->where('role_id','=',3)->find($id);
         return $expert;
     }
     public function getListExpert()
     {
-        $experts = User::with('experts')->where('role_id','=',3)
+        $experts = User::with('expert')->where('role_id','=',3)
         ->get();
         return $experts;
     }
