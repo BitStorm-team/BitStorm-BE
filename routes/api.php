@@ -35,7 +35,7 @@ Route::prefix('comments')->group(function () {
     Route::post('/posts/create',[PostController::class,'store']);
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('role.admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');

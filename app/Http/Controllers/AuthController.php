@@ -202,6 +202,7 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'certificate' => $request->certificate,
                 'experience' => $request->experience,
+                'count_rating' => 5
             ]);
         }
 
