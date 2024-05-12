@@ -92,7 +92,7 @@ class CommentsPostController extends Controller
     {
         //  lấy user hiện tại
         $user = $this->getUser($request);
-
+        
         $validator = Validator::make($request->all(), [
             'content' => 'required'
         ]);

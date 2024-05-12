@@ -75,7 +75,7 @@ class CalendarController extends Controller
                 'message' => $validator->errors()->first(),
             ], 422);
         }
-        $user = Auth::user();
+        $user = $this->getUser($request);
         if($user){
             if($user->role_id == 3){
                 $existingCalendar = Calendar::where('expert_id', $user->id)
@@ -117,3 +117,4 @@ class CalendarController extends Controller
         }
     }      
 }
+
