@@ -576,6 +576,59 @@
                 ]
             }
         },
+        "/api/comments/update/{id}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update a comment post by ID",
+                "description": "Update a comment post by its ID",
+                "operationId": "d00fd47499ba53fa16601b9f881e5541",
+                "requestBody": {
+                    "description": "Request body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "Content of the comment post",
+                                        "type": "string",
+                                        "example": "Updated comment content"
+                                    },
+                                    "status": {
+                                        "description": "Status of the comment post",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error. Invalid input data."
+                    },
+                    "404": {
+                        "description": "Not found. The comment post with the specified ID does not exist."
+                    },
+                    "500": {
+                        "description": "Internal server error. Failed to update the comment post."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/deleteComment/{post_id}/{user_id}": {
             "delete": {
                 "tags": [
