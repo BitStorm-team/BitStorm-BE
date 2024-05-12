@@ -48,52 +48,52 @@ class CommentsPostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-/**
- * Create a new comment post
- *
- * @OA\Post(
- *      path="/api/createComment",
- *      tags={"Comments"},
- *      summary="Create a new comment post",
- *      description="Create a new comment post with the provided data",
- *      security={{"bearerAuth":{}}},
- *      @OA\RequestBody(
- *          required=true,
- *          @OA\JsonContent(
- *              required={"post_id", "user_id", "content"},
- *              @OA\Property(property="post_id", type="integer", format="int64", example="123", description="The ID of the post the comment belongs to"),
- *              @OA\Property(property="user_id", type="integer", format="int64", example="456", description="The ID of the user who posted the comment"),
- *              @OA\Property(property="content", type="string", example="This is a great post!", description="The content of the comment")
- *          )
- *      ),
- *      @OA\Response(
- *          response=200,
- *          description="Successfully created a comment post",
- *          @OA\JsonContent(
- *              @OA\Property(property="success", type="boolean", example=true, description="Indicates whether the request was successful"),
- *              @OA\Property(property="message", type="string", example="Created comment post successfully!", description="A message describing the outcome of the request"),
- *          )
- *      ),
- *      @OA\Response(
- *          response=400,
- *          description="Bad request. Invalid input data."
- *      ),
- *      @OA\Response(
- *          response=401,
- *          description="Unauthorized. Authentication is required."
- *      ),
- *      @OA\Response(
- *          response=500,
- *          description="Internal server error. Failed to create the comment post."
- *      )
- * )
- */
+    /**
+     * Create a new comment post
+     *
+     * @OA\Post(
+     *      path="/api/createComment",
+     *      tags={"Comments"},
+     *      summary="Create a new comment post",
+     *      description="Create a new comment post with the provided data",
+     *      security={{"bearerAuth":{}}},
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"post_id", "user_id", "content"},
+     *              @OA\Property(property="post_id", type="integer", format="int64", example="123", description="The ID of the post the comment belongs to"),
+     *              @OA\Property(property="user_id", type="integer", format="int64", example="456", description="The ID of the user who posted the comment"),
+     *              @OA\Property(property="content", type="string", example="This is a great post!", description="The content of the comment")
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successfully created a comment post",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true, description="Indicates whether the request was successful"),
+     *              @OA\Property(property="message", type="string", example="Created comment post successfully!", description="A message describing the outcome of the request"),
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. Invalid input data."
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthorized. Authentication is required."
+     *      ),
+     *      @OA\Response(
+     *          response=500,
+     *          description="Internal server error. Failed to create the comment post."
+     *      )
+     * )
+     */
     public function store(Request $request)
     {
         $user = $this->getUser($request);
         $userID = $user->id;
         $validator = Validator::make($request->all(), [
-           'content' => 'required'
+            'content' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -169,8 +169,9 @@ class CommentsPostController extends Controller
      */
 
 
-    public function update(Request $request, CommentsPost $commentsPost, $id)
+    public function update(Request $request, $postId, $commentId)
     {
+        // return response()->json($request->content);
         try {
             // Validate request data
             $validatedData = $request->validate([
@@ -178,8 +179,24 @@ class CommentsPostController extends Controller
                 'status' => 'required|integer', // Validate status as an integer
             ]);
 
-            // Find comment post by id
-            $comment = CommentsPost::findOrFail($id);
+            // Find post containing the comment
+            $post = Post::findOrFail($postId);
+
+            // Authenticate user
+            $user = $this->getUser($request);
+
+            // Find comment post by id and post_id
+            $comment = CommentsPost::where('id', $commentId)
+                ->where('post_id', $postId)
+                ->firstOrFail();
+
+            // Check if the authenticated user is the owner of the comment
+            if ($comment->user_id !== $user->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not authorized to update this comment',
+                ], 403);
+            }
 
             // Update the comment
             $comment->update($validatedData);
@@ -206,7 +223,6 @@ class CommentsPostController extends Controller
             ], 500);
         }
     }
-
 
 
 
@@ -248,9 +264,9 @@ class CommentsPostController extends Controller
         $user = $this->getUser($request);
         $userID = $user->id;
         $comment = CommentsPost::where('post_id', $post_id)
-                                ->where('user_id',$userID)
-                                ->first();
-        if($comment) {
+            ->where('user_id', $userID)
+            ->first();
+        if ($comment) {
             $comment->delete();
             return response()->json([
                 'success' => true,

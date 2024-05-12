@@ -26,9 +26,9 @@ use App\Models\Feedback;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('/posts/{postId}/comments/{commentId}', [CommentsPostController::class, 'update']);
 Route::prefix('comments')->group(function () {
     Route::post('/create', [CommentsPostController::class, 'store']);
-    Route::post('/update', [CommentsPostController::class, 'update']);
     Route::delete('/delete/{post_id}', [CommentsPostController::class, 'destroy']);
 
 });
