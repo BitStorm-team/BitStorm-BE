@@ -2,26 +2,36 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
 use Closure;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CheckRoleAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     */
-    public static function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-        // $user = Auth::user();
-        // if(($user->role_id !== 1)){
-        //     return response()->json(['message' => 'Your account is not accept.'], 409);
-        // }
+        // Kiểm tra xem token có tồn tại không
+        $token = $request->header('Authorization');
+        if (!$token) {
+            return response()->json(['message' => 'Unauthorized.'], 401);
+        }
+
+        try {
+            // Giải mã và xác thực token
+            $user = JWTAuth::parseToken()->authenticate($token);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['message' => 'Token has expired.'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['message' => 'Token is invalid.'], 401);
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['message' => 'Token is absent.'], 401);
+        }
+
+        // Kiểm tra quyền admin
+        if ($user->role_id != 1) {
+            return response()->json(['message' => 'Your account is not authorized.'], 403);
+        }
+
         return $next($request);
     }
 }

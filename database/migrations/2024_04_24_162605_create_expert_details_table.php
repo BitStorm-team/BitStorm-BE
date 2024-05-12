@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('expert_details', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->primary(); // user_id là khóa chính
+            $table->unsignedBigInteger('user_id')->unique()->primary(); // user_id là khóa chính
             $table->text('experience')->nullable();
             $table->text('certificate')->nullable();
             $table->decimal('average_rating', 2, 1)->default(0.0);
