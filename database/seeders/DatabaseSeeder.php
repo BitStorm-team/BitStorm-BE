@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
             CommentsPostSeeder::class,
             RepliesPostSeeder::class,
             CalendarSeeder::class,
-            BookingSeeder::class
+            BookingSeeder::class,
+            FeedbackSeeder::class,
         ]);
 
     }

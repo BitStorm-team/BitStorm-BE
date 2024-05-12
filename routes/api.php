@@ -9,6 +9,8 @@ use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentsPostController;
+use App\Http\Controllers\FeedbackController;
+use App\Models\Feedback;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,13 +28,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 Route::prefix('comments')->group(function () {
     Route::post('/createComment', [CommentsPostController::class, 'store']);
-    Route::delete('/deleteComment/{post_id}/{user_id}', [CommentsPostController::class, 'destroy']);
+    Route::delete('/deleteComment/{post_id}', [CommentsPostController::class, 'destroy']);
+
 });
-// Post 
+// Post
     Route::post('/posts/create',[PostController::class,'store']);
 // admin routes
 Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('role.admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
@@ -47,8 +50,10 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('posts', PostController::class);
     Route::put('posts/update-status/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
     //booking
-    Route::get('/bookings', [BookingController::class, 'getAllBookings']);
+    Route::get('/bookings',[BookingController::class,'getAllBookings']);
 });
+Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
+Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExpert']);
 
 Route::prefix('user')->group(function () {
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
