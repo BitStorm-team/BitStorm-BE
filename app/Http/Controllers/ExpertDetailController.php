@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Nette\Schema\Expect;
+use DB;
 
 class ExpertDetailController extends Controller
 {
@@ -175,7 +176,6 @@ class ExpertDetailController extends Controller
     public function show($id)
     {
         $expert = $this->experts->getExpertProfile($id);
-
         if(empty($expert)){
             return response()->json([
                 'success' => false,
@@ -203,75 +203,82 @@ class ExpertDetailController extends Controller
         //
     }
     public function updateExpertProfile(Request $request)
-    {
-        $expertInfor = $this->getUser($request);
-        $expertID = $expertInfor->id;
-        $expert = $this->experts->getExpertProfile($expertID);
+{
+    $expert = $this->getUser($request);
+    $expertID = $expert->id;
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string', 
-            'email' => 'required|string|email',
-            'password' => [
-                'required',
-                'string',
-                'min:8', 
-                'regex:/[A-Z]/', // Ít nhất một chữ cái viết hoa
-                'regex:/[a-z]/', // Ít nhất một chữ cái viết thường
-                'regex:/[0-9]/', // Ít nhất một ký tự số
-                'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // Ít nhất một ký tự đặc biệt
-            ],
-            'profile_picture' => 'string',
-            'date_of_birth' => 'date',
-            'phone_number' => [
-                'numeric',
-                'digits:10', // Đảm bảo số điện thoại có 10 chữ số
-                'regex:/^(0)[0-9]{9}$/', // Đảm bảo số điện thoại bắt đầu bằng số 0 và theo sau là 9 chữ số
-            ],
-            'gender' => 'string',
-            'experience' => 'string',
-            'certificate' => 'string'
-        ]);
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string', 
+        'email' => 'required|string|email',
+        'password' => [
+            'required',
+            'string',
+            'min:8', 
+            'regex:/[A-Z]/', // At least one uppercase letter
+            'regex:/[a-z]/', // At least one lowercase letter
+            'regex:/[0-9]/', // At least one digit
+            'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // At least one special character
+        ],
+        'profile_picture' => 'string',
+        'date_of_birth' => 'date',
+        'phone_number' => [
+            'numeric',
+            'digits:10', // Ensure phone number has 10 digits
+            'regex:/^(0)[0-9]{9}$/', // Ensure phone number starts with 0 and is followed by 9 digits
+        ],
+        'gender' => 'string',
+        'experience' => 'string',
+        'certificate' => 'string'
+    ]);
 
-        if(empty($expert)){
-            return response()->json([
-                'success' => false,
-                'message' => 'expert ID not found',
-            ], 404);
-        }
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-            ], 400); //Bad request
-        }
-
-         // Kiểm tra xem email đã tồn tại cho một người dùng khác chưa
-         $existingExpert = User::where('email', $request->input('email'))->where('id', '!=', $expertID)->first();
-         if ($existingExpert) {
-             return response()->json([
-                 'success' => false,
-                 'message' => 'Email already exists in the system.',
-             ], 400); //Bad request
-         }
-
-        $expert->name = $request->input('name');
-        $expert->email = $request->input('email');
-        $expert->password = $request->input('password');
-        $expert->address = $request->input('');
-        $expert->phone_number = $request->input('phone_number');
-        $expert->gender = $request->input('gender');
-        $expert->date_of_birth = $request->input('date_of_birth');
-        $expert->status = 1;
-        $expert->experience = $request->input('experience');
-        $expert->certificate = $request->input('certificate');
-        $expert->save();
+    if (empty($expertID)) {
         return response()->json([
-            'success' => true,
-            'message' => 'Expert updated successfully',
-            'data' => $expert,
-        ], 200);
+            'success' => false,
+            'message' => 'Expert ID not found',
+        ], 404);
     }
+
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => $validator->errors()->first(),
+        ], 400); // Bad request
+    }
+
+    // Check if the email already exists for another user
+    $existingExpert = User::where('email', $request->input('email'))->where('id', '!=', $expertID)->first();
+    if ($existingExpert) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Email already exists in the system.',
+        ], 400); // Bad request
+    }
+
+    // Update expert information
+    $expert->name = $request->input('name');
+    $expert->email = $request->input('email');
+    $expert->password = $request->input('password');
+    $expert->address = $request->input('address'); // Make sure to set the address
+    $expert->phone_number = $request->input('phone_number');
+    $expert->gender = $request->input('gender');
+    $expert->date_of_birth = $request->input('date_of_birth');
+    $expert->status = 1;
+    $expert->save();
+
+    // Update expert details
+    $expertDetail = ExpertDetail::where('user_id', $expertID)->first();
+    $expertDetail->experience = $request->input('experience');
+    $expertDetail->certificate = $request->input('certificate');
+    $expertDetail->save();
+
+    $expert = $this->experts->getExpertProfile($expertID);
+    return response()->json([
+        'success' => true,
+        'message' => 'Expert updated successfully',
+        'data' => $expert,
+    ], 200);
+}
+
     /**
      * Remove the specified resource from storage.
      *

@@ -64,6 +64,7 @@ Route::prefix('user')->group(function () {
 Route::prefix('expert')->group(function () {
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::patch('/update-expert-profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
+   // Route::get('/update-expert-profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
 });
 
