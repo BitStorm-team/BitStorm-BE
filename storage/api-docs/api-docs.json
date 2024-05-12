@@ -26,7 +26,6 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Request body",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -340,6 +339,136 @@
                 ]
             }
         },
+        "/api/createNewCalendar": {
+            "post": {
+                "tags": [
+                    "Calendar"
+                ],
+                "summary": "Create a new calendar",
+                "description": "Create a new calendar for an expert",
+                "operationId": "createNewCalendar",
+                "requestBody": {
+                    "description": "Calendar data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "start_time",
+                                    "end_time",
+                                    "price",
+                                    "describe"
+                                ],
+                                "properties": {
+                                    "start_time": {
+                                        "description": "Start time of the calendar",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "end_time": {
+                                        "description": "End time of the calendar",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "price": {
+                                        "description": "Price of the calendar",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "describe": {
+                                        "description": "Description of the calendar",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Create new calendar successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "There is already a calendar within this time range"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please log in as an expert to create a new calendar"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please log in as an expert to create a new calendar"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/comments": {
             "get": {
                 "tags": [
@@ -438,6 +567,59 @@
                     },
                     "500": {
                         "description": "Internal server error. Failed to create the comment post."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/comments/update/{id}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update a comment post by ID",
+                "description": "Update a comment post by its ID",
+                "operationId": "d00fd47499ba53fa16601b9f881e5541",
+                "requestBody": {
+                    "description": "Request body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "Content of the comment post",
+                                        "type": "string",
+                                        "example": "Updated comment content"
+                                    },
+                                    "status": {
+                                        "description": "Status of the comment post",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "400": {
+                        "description": "Validation error. Invalid input data."
+                    },
+                    "404": {
+                        "description": "Not found. The comment post with the specified ID does not exist."
+                    },
+                    "500": {
+                        "description": "Internal server error. Failed to update the comment post."
                     }
                 },
                 "security": [
@@ -897,7 +1079,7 @@
                     "Feedback experts"
                 ],
                 "summary": "Feedback about a expert",
-                "operationId": "4d567163b82176d52da6a7f133d23fde",
+                "operationId": "29bce4848d92ae2a1beb6533569c43c3",
                 "parameters": [
                     {
                         "name": "booking_id",
@@ -934,7 +1116,9 @@
                     "401": {
                         "description": "Not found"
                     }
-                },
+                }
+            }
+        },
         "/api/admin/users": {
             "get": {
                 "tags": [
@@ -1051,4 +1235,4 @@
             }
         }
     }
-        }}}
+}

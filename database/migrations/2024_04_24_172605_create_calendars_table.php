@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('end_time')->nullable(); // Allows NULL values
             $table->decimal('price', 8, 2);
             $table->text('describe');
-            $table->boolean('status');
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }
