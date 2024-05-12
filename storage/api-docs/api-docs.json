@@ -26,7 +26,6 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Request body",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -338,6 +337,136 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/createNewCalendar": {
+            "post": {
+                "tags": [
+                    "Calendar"
+                ],
+                "summary": "Create a new calendar",
+                "description": "Create a new calendar for an expert",
+                "operationId": "createNewCalendar",
+                "requestBody": {
+                    "description": "Calendar data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "start_time",
+                                    "end_time",
+                                    "price",
+                                    "describe"
+                                ],
+                                "properties": {
+                                    "start_time": {
+                                        "description": "Start time of the calendar",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "end_time": {
+                                        "description": "End time of the calendar",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "price": {
+                                        "description": "Price of the calendar",
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "describe": {
+                                        "description": "Description of the calendar",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Create new calendar successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "There is already a calendar within this time range"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please log in as an expert to create a new calendar"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Please log in as an expert to create a new calendar"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/admin/comments": {
@@ -897,7 +1026,7 @@
                     "Feedback experts"
                 ],
                 "summary": "Feedback about a expert",
-                "operationId": "4d567163b82176d52da6a7f133d23fde",
+                "operationId": "29bce4848d92ae2a1beb6533569c43c3",
                 "parameters": [
                     {
                         "name": "booking_id",
@@ -934,7 +1063,9 @@
                     "401": {
                         "description": "Not found"
                     }
-                },
+                }
+            }
+        },
         "/api/admin/users": {
             "get": {
                 "tags": [
@@ -1051,4 +1182,4 @@
             }
         }
     }
-        }}}
+}
