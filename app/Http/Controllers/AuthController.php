@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExpertDetail;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Facades\Validator;
 
 
@@ -156,36 +159,57 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // Kiểm tra thông tin người dùng cho các vai trò khác
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email', // Thêm kiểm tra duy nhất cho email
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'role_id' => 'required|exists:roles,id', // Kiểm tra role_id tồn tại trong bảng roles
+            'role_id' => 'required|exists:roles,id',
+            'experience' => 'nullable|string', // Trường experience có thể null
+            'certificate' => 'nullable|string', // Trường certificate có thể null
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        // Tạo người dùng mới với các trường được chỉ định
+        // Tạo người dùng mới
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'address' => '', // Hoặc bạn có thể thêm giá trị mặc định khác nếu cần thiết
+            'address' => '',
             'profile_picture' => asset('assets/img/avatar/avatar-4.png'),
             'date_of_birth' => null,
             'phone_number' => '',
             'gender' => '',
+            'status' => true,
             'role_id' => $request->role_id,
         ]);
+
+        // Nếu vai trò là người dùng chuyên gia (role_id = 3) và có trường experience và certificate được cung cấp
+        if ($request->role_id == 3 && $request->has('experience') && $request->has('certificate')) {
+            // Kiểm tra xem đã có dữ liệu trong bảng expert_details tương ứng với user_id của người dùng mới hay không
+            $checkExpert = DB::table('expert_details')->where('user_id', $user->id)->exists();
+
+            // Nếu có dữ liệu, xóa dữ liệu cũ trước khi tạo mới
+            if ($checkExpert) {
+                DB::table('expert_details')->where('user_id', $user->id)->delete();
+            }
+
+            // Tạo chi tiết chuyên gia mới
+            ExpertDetail::create([
+                'user_id' => $user->id,
+                'certificate' => $request->certificate,
+                'experience' => $request->experience,
+            ]);
+        }
 
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
         ], 201);
     }
-
 
 
     /**
