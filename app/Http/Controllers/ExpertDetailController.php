@@ -44,7 +44,7 @@ class ExpertDetailController extends Controller
         'success' => true,
         'message' => 'Success',
         'data' => $experts
-        ],200);
+        ]);
     }
 
     // Get expert details
@@ -100,7 +100,7 @@ class ExpertDetailController extends Controller
     }
    /**
      * @OA\Get(
-     *     path="/api/experts",
+     *     path="/api/admin/experts",
      *     summary="Display all expert form database and display in the website",
      *      tags={"Expert Details"},
      *     @OA\Response(response="200", description="Success"),
@@ -135,7 +135,7 @@ class ExpertDetailController extends Controller
             'data' => [
                 $experts
             ],
-        ],200);
+        ]);
     }
 
     /**
