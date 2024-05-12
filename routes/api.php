@@ -26,16 +26,7 @@ use App\Models\Feedback;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/posts/{postId}/comments/{commentId}', [CommentsPostController::class, 'update']);
-Route::prefix('comments')->group(function () {
-    Route::post('/create', [CommentsPostController::class, 'store']);
-    Route::delete('/delete/{post_id}', [CommentsPostController::class, 'destroy']);
 
-});
-// Post
-    Route::post('/posts/create',[PostController::class,'store']);
-// admin routes
-Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
 Route::prefix('admin')->middleware('role.admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
@@ -55,7 +46,6 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
 });
 Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
 Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExpert']);
-
 Route::prefix('user')->group(function () {
     Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
     Route::post('book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
@@ -70,7 +60,18 @@ Route::prefix('experts')->group(function (){
 
 // post
 Route::prefix('posts')->group(function () {
+    // post
+    // create a new post
+    Route::post('/create',[PostController::class,'store']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+    // comment of the post
+    // create a new comment
+    Route::post('/{postId}/comments/create', [CommentsPostController::class, 'store']);
+    // update comment
+    Route::post('/{postId}/comments/update/{commentId}', [CommentsPostController::class, 'update']);
+    // delete comment
+    Route::delete('/{postId}/comments/delete/{commentId}', [CommentsPostController::class, 'destroy']);
+
 });
 
 // auth api

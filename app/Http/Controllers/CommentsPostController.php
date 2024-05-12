@@ -88,10 +88,11 @@ class CommentsPostController extends Controller
      *      )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request, $postId)
     {
+        //  lấy user hiện tại
         $user = $this->getUser($request);
-        $userID = $user->id;
+
         $validator = Validator::make($request->all(), [
             'content' => 'required'
         ]);
@@ -100,8 +101,8 @@ class CommentsPostController extends Controller
         }
 
         $data = [
-            'post_id' => $request->post_id,
-            'user_id' => $userID,
+            'post_id' => $postId,
+            'user_id' => $user->id,
             'content' => $request->content,
             'status' => 1
         ];
@@ -179,9 +180,6 @@ class CommentsPostController extends Controller
                 'status' => 'required|integer', // Validate status as an integer
             ]);
 
-            // Find post containing the comment
-            $post = Post::findOrFail($postId);
-
             // Authenticate user
             $user = $this->getUser($request);
 
@@ -258,14 +256,15 @@ class CommentsPostController extends Controller
      * )
      */
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, $postId, $commentId)
     {
-        $post_id =  $request->post_id;
         $user = $this->getUser($request);
-        $userID = $user->id;
-        $comment = CommentsPost::where('post_id', $post_id)
-            ->where('user_id', $userID)
-            ->first();
+        $comment = CommentsPost::where('id', $commentId)
+        ->where('post_id', $postId)
+        ->where('user_id', $user->id)
+        ->firstOrFail();
+
+
         if ($comment) {
             $comment->delete();
             return response()->json([
