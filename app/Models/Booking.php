@@ -17,4 +17,9 @@ class Booking extends Model
     {
         return $this->belongsTo(Calendar::class, 'calendar_id');
     }
+    public function feedbackExpert()
+    {
+        return $this->hasOne(FeedbackExpert::class,'booking_id');
+    }
 }
+

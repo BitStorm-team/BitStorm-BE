@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class ExpertDetail extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['user_id', 'experience', 'certificate'];
+
     public function getAllExpert()
     {
         $experts = User::with('expert')->where('role_id','=',3)->get();
