@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ExpertDetailController;
 use App\Http\Controllers\ContactController;
@@ -58,6 +59,8 @@ Route::prefix('user')->group(function () {
 Route::prefix('expert')->group(function () {
     Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
+    //calendar
+    Route::post('/calendar/create', [CalendarController::class, 'createNewCalendar']);
 });
 
 // post
