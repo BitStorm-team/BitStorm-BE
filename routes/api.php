@@ -1,16 +1,15 @@
 <?php
 
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CommentsPostController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ExpertDetailController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ExpertDetailController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentsPostController;
-use App\Http\Controllers\FeedbackController;
-use App\Models\Feedback;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,15 +25,20 @@ use App\Models\Feedback;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
+// api for admin role
+Route::middleware(['api', 'role:admin'])->group(function () {    // admin routes
+    Route::prefix('admin')->group(function () {
+        # /api/admin/experts
+        Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
+    });
+});
+
 Route::prefix('comments')->group(function () {
     Route::post('/createComment', [CommentsPostController::class, 'store']);
     Route::delete('/deleteComment/{post_id}', [CommentsPostController::class, 'destroy']);
 
 });
-// Post 
-    Route::post('/posts/create',[PostController::class,'store']);
-// admin routes
-Route::get('/experts', [ExpertDetailController::class, 'getListExpert']);
+
 Route::prefix('admin')->group(function () {
     Route::get('/comments', [CommentsPostController::class, 'index']);
     Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
@@ -50,8 +54,11 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('posts', PostController::class);
     Route::put('posts/update-status/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
     //booking
-    Route::get('/bookings',[BookingController::class,'getAllBookings']);
+    Route::get('/bookings', [BookingController::class, 'getAllBookings']);
 });
+
+// Post
+Route::post('/posts/create', [PostController::class, 'store']);
 Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
 Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExpert']);
 
