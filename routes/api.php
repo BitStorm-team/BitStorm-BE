@@ -60,6 +60,9 @@ Route::prefix('experts')->group(function (){
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
     //calendar
     Route::post('/calendar/create', [CalendarController::class, 'createNewCalendar']);
+    // serach experts
+    Route::post('/search', [ExpertDetailController::class, 'search']);
+
 });
 
 
