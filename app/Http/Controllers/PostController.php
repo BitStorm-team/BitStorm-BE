@@ -108,8 +108,8 @@ class PostController extends Controller
     public function updatePostContent(Request $request,$id=0){
         $user = $this->getUser($request);
         $userId = $user->id;
-        $post = Post::find($id)->where('user_id',$userId)->first();
-        if($post){
+        $post = Post::where('id', $id)->where('user_id', $userId)->first();
+        if(empty($post)){
             return response()->json([
                 'success' => false,
                 'message' => 'user not match',
@@ -146,7 +146,26 @@ class PostController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'PostID not found',
-                'data'=> null,
+
+            ], 404);
+        }
+        $post->comments()->delete();
+        $post->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post and its comments deleted successfully!',
+        ], 200);
+    }
+    public function deletePost(Request $request, $id)
+    {
+        $user = $this->getUser($request);
+        $userId = $user->id;
+        $post = Post::where('id', $id)->where('user_id',$userId)->with('comments', 'comments.replies')->first();
+        if(empty($post)){
+            return response()->json([
+                'success' => false,
+                'message' => 'PostID not found',
             ], 404);
         }
         $post->comments()->delete();
