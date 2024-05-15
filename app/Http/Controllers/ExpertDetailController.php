@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ExpertDetail;
 use App\Models\Calendar;
-
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Nette\Schema\Expect;
+use DB;
 
 class ExpertDetailController extends Controller
 {
@@ -32,19 +33,19 @@ class ExpertDetailController extends Controller
      */
     public function index()
     {
-      $experts = $this->experts->getAllExpert();
-      if($experts->isEmpty()){
+        $experts = $this->experts->getAllExpert();
+        if ($experts->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Experts not found',
+                'data' => null,
+            ], 404);
+        };
         return response()->json([
-            'success' => false,
-            'message' => 'Experts not found',
-            'data'=> null,
-        ], 404);
-      };
-      return response()->json([
-        'success' => true,
-        'message' => 'Success',
-        'data' => $experts
-        ],200);
+            'success' => true,
+            'message' => 'Success',
+            'data' => $experts
+        ], 200);
     }
 
     // Get expert details
@@ -98,7 +99,7 @@ class ExpertDetailController extends Controller
             'data' => $data,
         ], 200);
     }
-   /**
+    /**
      * @OA\Get(
      *     path="/api/experts",
      *     summary="Display all expert form database and display in the website",
@@ -111,11 +112,11 @@ class ExpertDetailController extends Controller
     {
         $experts = $this->experts->getListExpert();
 
-        if($experts->isEmpty()){
+        if ($experts->isEmpty()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Experts not found',
-                'data'=> null,
+                'data' => null,
             ], 404);
         }
         return response()->json([
@@ -126,7 +127,7 @@ class ExpertDetailController extends Controller
             'current_page' => 1,
             'last_page' => 4,
             'first_page_url' => null,
-            'last_page_url' =>null,
+            'last_page_url' => null,
             'next_page_url' => null,
             'prev_page_url' => null,
             'path' => "",
@@ -135,7 +136,7 @@ class ExpertDetailController extends Controller
             'data' => [
                 $experts
             ],
-        ],200);
+        ], 200);
     }
 
     /**
@@ -155,16 +156,16 @@ class ExpertDetailController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
-    * @OA\Get(
-    *     path="/api/expert/expert-profile/{id}",
-    *     summary="Display expert profile",
-    *     tags={"Expert profile"},
-    *     @OA\Parameter(
-    *              name="id",
-    *              in="path",
-    *              description="Expert ID",
-    *              required=true,
-    *              @OA\Schema(type="integer")
+     * @OA\Get(
+     *     path="/api/expert/expert-profile/{id}",
+     *     summary="Display expert profile",
+     *     tags={"Expert profile"},
+     *     @OA\Parameter(
+     *              name="id",
+     *              in="path",
+     *              description="Expert ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
      *      ),
      *     @OA\Response(response="200", description="Success"),
      *     @OA\Response(response=400, description="Bad request"),
@@ -175,12 +176,11 @@ class ExpertDetailController extends Controller
     public function show($id)
     {
         $expert = $this->experts->getExpertProfile($id);
-
-        if(empty($expert)){
+        if (empty($expert)) {
             return response()->json([
                 'success' => false,
                 'message' => 'ExpertID not found',
-                'data'=> null,
+                'data' => null,
             ], 404);
         }
 
@@ -202,6 +202,82 @@ class ExpertDetailController extends Controller
     {
         //
     }
+    public function updateExpertProfile(Request $request)
+    {
+        $expert = $this->getUser($request);
+        $expertID = $expert->id;
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string',
+            'email' => 'required|string|email',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/[A-Z]/', // At least one uppercase letter
+                'regex:/[a-z]/', // At least one lowercase letter
+                'regex:/[0-9]/', // At least one digit
+                'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // At least one special character
+            ],
+            'profile_picture' => 'string',
+            'date_of_birth' => 'date',
+            'phone_number' => [
+                'numeric',
+                'digits:10', // Ensure phone number has 10 digits
+                'regex:/^(0)[0-9]{9}$/', // Ensure phone number starts with 0 and is followed by 9 digits
+            ],
+            'gender' => 'string',
+            'experience' => 'string',
+            'certificate' => 'string'
+        ]);
+
+        if (empty($expertID)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Expert ID not found',
+            ], 404);
+        }
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 400); // Bad request
+        }
+
+        // Check if the email already exists for another user
+        $existingExpert = User::where('email', $request->input('email'))->where('id', '!=', $expertID)->first();
+        if ($existingExpert) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email already exists in the system.',
+            ], 400); // Bad request
+        }
+
+        // Update expert information
+        $expert->name = $request->input('name');
+        $expert->email = $request->input('email');
+        $expert->password = $request->input('password');
+        $expert->address = $request->input('address'); // Make sure to set the address
+        $expert->phone_number = $request->input('phone_number');
+        $expert->gender = $request->input('gender');
+        $expert->date_of_birth = $request->input('date_of_birth');
+        $expert->status = 1;
+        $expert->save();
+
+        // Update expert details
+        $expertDetail = ExpertDetail::where('user_id', $expertID)->first();
+        $expertDetail->experience = $request->input('experience');
+        $expertDetail->certificate = $request->input('certificate');
+        $expertDetail->save();
+
+        $expert = $this->experts->getExpertProfile($expertID);
+        return response()->json([
+            'success' => true,
+            'message' => 'Expert updated successfully',
+            'data' => $expert,
+        ], 200);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -212,5 +288,30 @@ class ExpertDetailController extends Controller
     public function destroy(ExpertDetail $expertDetail)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+
+        if ($searchTerm) {
+            $experts = User::where('name', 'like', "%$searchTerm%")
+                ->orWhere('email', 'like', "%$searchTerm%")
+                ->with('expert')
+                ->where('role_id',3)
+                ->get();
+            if ($experts->isEmpty()) {
+                $experts = ExpertDetail::where('experience', 'like', "%$searchTerm%")->with('user')->get();
+            }
+        } else {
+            // Trả về 1 nếu không có từ khóa tìm kiếm
+            return response()->json(['message' => 'No search term provided'], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Expert updated successfully',
+            'data' => $experts,
+        ], 200);
     }
 }

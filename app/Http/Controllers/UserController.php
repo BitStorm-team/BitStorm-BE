@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     protected $user;
@@ -153,7 +153,6 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'user ID not found',
-                'data'=> null,
             ], 404);
         }
         $user->status = $request->input('status');
@@ -165,6 +164,70 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function updateUserProfile(Request $request)
+    {
+        $userInfor = $this->getUser($request);
+        $userID = $userInfor->id;
+        $user = User::find($userID);
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string', 
+            'email' => 'required|string|email',
+            'password' => [
+                'required',
+                'string',
+                'min:8', 
+                'regex:/[A-Z]/', // Ít nhất một chữ cái viết hoa
+                'regex:/[a-z]/', // Ít nhất một chữ cái viết thường
+                'regex:/[0-9]/', // Ít nhất một ký tự số
+                'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // Ít nhất một ký tự đặc biệt
+            ],
+            'profile_picture' => 'string',
+            'phone_number' => [
+                'numeric',
+                'digits:10', // Đảm bảo số điện thoại có 10 chữ số
+                'regex:/^(0)[0-9]{9}$/', // Đảm bảo số điện thoại bắt đầu bằng số 0 và theo sau là 9 chữ số
+            ],
+            'gender' => 'string'
+        ]);
+
+        if(empty($user)){
+            return response()->json([
+                'success' => false,
+                'message' => 'user ID not found',
+            ], 404);
+        }
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 400); //Bad request
+        }
+
+        // Kiểm tra xem email đã tồn tại cho một người dùng khác chưa
+        $existingUser = User::where('email', $request->input('email'))->where('id', '!=', $userID)->first();
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email already exists in the system.',
+            ], 400); //Bad request
+        }
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->password = $request->input('password');
+        $user->address = $request->input('address ');
+        $user->phone_number = $request->input('phone_number');
+        $user->gender = $request->input('gender');
+        $user->status = 1;
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully',
+            'data' => $user,
+        ], 200);
+    }
     /**
      * Remove the specified resource from storage.
      *

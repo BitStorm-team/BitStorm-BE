@@ -103,7 +103,7 @@ class BookingController extends Controller
                 'success' => false,
                 'message' => 'This calendar has already been booked by other users!',
                 'data' => null
-            ], 401);
+            ], 409);
         }
         
         // $user = Auth::user();
@@ -119,7 +119,7 @@ class BookingController extends Controller
         $booking->user_id = $userID; 
         $booking->calendar_id = $calendarID;
         $booking->note = $request->note;
-        $booking->status = 'Wait for acceptance';
+        $booking->status = 'New';
         
         if ($booking->save()) {
             $calendar->status = 0;
