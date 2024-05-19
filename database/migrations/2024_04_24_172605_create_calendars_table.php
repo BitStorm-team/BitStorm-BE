@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamp('end_time')->nullable(); // Allows NULL values
             $table->integer('price')->unsigned()->default(200000);
             $table->text('describe');
+            $table->softDeletes();
             $table->boolean('status')->default(0);
             $table->timestamps();
         });

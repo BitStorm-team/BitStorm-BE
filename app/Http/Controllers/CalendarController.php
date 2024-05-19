@@ -154,8 +154,9 @@ class CalendarController extends Controller
     public function delete(Request $request, $id)
     {
         $user = $this->getUser($request);
-        $calendar = Calendar::find($id)->where('expert_id', $user->id);
-        return $calendar;
+
+        $calendar = Calendar::where('expert_id', $user->id)->find($id);
+    
         if (!$calendar) {
             return response()->json([
                 'success' => false,
