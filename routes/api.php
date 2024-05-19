@@ -85,29 +85,35 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
     Route::get('/admin-profile/{id}', [UserController::class, 'showAdminProfile'])->name('admin.profile');
 });
 
+// feedbacks
 Route::get('/feedbacks', [FeedbackController::class, 'getAllFeedbacks']);
+//  create a new feedback
 Route::post('/feedbacks/create', [FeedbackController::class, 'createFeedbackExpert']);
+
+// user routes
 Route::prefix('user')->group(function () {
     Route::get('/profile/{id}', [UserController::class, 'show'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'updateUserProfile'])->name('update.user.profile');
     Route::post('/book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
 });
 
+// expert routes
 Route::prefix('experts')->group(function () {
     Route::get('/', [ExpertDetailController::class, 'getListExpert']);
     Route::get('/profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::patch('/profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
     //calendar
-    Route::post('/calendar/create', [CalendarController::class, 'createNewCalendar']);
-    // serach experts
+    Route::post('/calendar', [CalendarController::class, 'createNewCalendar']);
+    //  update contact
+    Route::put('/calendar/{id}', [CalendarController::class, 'update']);
+    //  delete contact
+    Route::delete('/calendar/{id}', [CalendarController::class, 'delete']);
+    // search experts
     Route::post('/search', [ExpertDetailController::class, 'search']);
     // Filter expert
     Route::post('/filter', [ExpertDetailController::class, 'filter']);
-
-
 });
-
 
 // post
 Route::prefix('posts')->group(function () {
@@ -115,7 +121,6 @@ Route::prefix('posts')->group(function () {
     // create a new post
     Route::post('/create', [PostController::class, 'store']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
-
     // comment of the post
     // create a new comment
     Route::post('/{postId}/comments/create', [CommentsPostController::class, 'store']);
@@ -125,7 +130,10 @@ Route::prefix('posts')->group(function () {
     Route::delete('/{postId}/comments/delete/{commentId}', [CommentsPostController::class, 'destroy']);
 });
 
+//contact us
+// create new contact
+Route::post('/contactUs', [ContactController::class, 'contactUs']);
+
+
 // auth api
 require __DIR__ . '/auth.php';
-//contact us
-Route::post('/contactUs', [ContactController::class, 'contactUs']);
