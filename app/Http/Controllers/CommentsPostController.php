@@ -8,6 +8,7 @@ use App\Models\Post;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use DateTime;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,7 @@ class CommentsPostController extends Controller
      */
     public function index()
     {
-        $commentsPosts = CommentsPost::with('user', 'replies.user')->paginate(15);
+        $commentsPosts = CommentsPost::with('user', 'replies.user')->paginate(10);
         return response()->json([
             'success' => true,
             'message' => 'Show all comments successfully!',
@@ -92,7 +93,7 @@ class CommentsPostController extends Controller
     {
         //  lấy user hiện tại
         $user = $this->getUser($request);
-        
+
         $validator = Validator::make($request->all(), [
             'content' => 'required'
         ]);
@@ -260,9 +261,9 @@ class CommentsPostController extends Controller
     {
         $user = $this->getUser($request);
         $comment = CommentsPost::where('id', $commentId)
-        ->where('post_id', $postId)
-        ->where('user_id', $user->id)
-        ->firstOrFail();
+            ->where('post_id', $postId)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
 
 
         if ($comment) {
@@ -276,6 +277,108 @@ class CommentsPostController extends Controller
                 'success' => false,
                 'message' => 'post_id or user_id not found',
             ], 404);
+        }
+    }
+
+    public function createPostByAdmin(Request $request)
+    {
+        //  lấy user hiện tại
+        $user = $this->getUser($request);
+
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'post_id' => 'required',
+            'content' => 'required',
+            'status' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $data = [
+            'post_id' => $request->post_id,
+            'user_id' => $request->user_id,
+            'content' => $request->content,
+            'status' =>  $request->status, // Validate status as an integer
+        ];
+        $commentsPost = CommentsPost::create($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Created comment post successfully!',
+            'data' => $commentsPost,
+        ], 200);
+    }
+
+    public function updatePostByAdmin(Request $request, $id)
+    {
+        try {
+            // Validate request data
+            $validator = Validator::make($request->all(), [
+                'status' => 'required|integer',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation error',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            // Find comment post by id
+            $comment = CommentsPost::where('id', $id)->firstOrFail();
+
+            // Update the comment with validated data
+            $comment->update($validator->validated());
+
+            // Return success response
+            return response()->json([
+                'success' => true,
+                'message' => 'Comment post updated successfully!',
+                'data' => $comment,
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            // Return error response if comment not found
+            return response()->json([
+                'success' => false,
+                'message' => 'Comment post not found',
+                'error' => $e->getMessage(),
+            ], 404);
+        } catch (\Exception $e) {
+            // Return error response for other exceptions
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update comment post',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function destroyPostByAdmin(Request $request, $id)
+    {
+        try {
+            // Find the comment post by id
+            $comment = CommentsPost::where('id', $id)->firstOrFail();
+
+            // Soft delete the comment
+            $comment->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Deleted successfully',
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Comment post not found',
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete comment post',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

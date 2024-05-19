@@ -18,7 +18,7 @@ return new class extends Migration
             $table->bigInteger('expert_id')->unsigned();
             $table->timestamp('start_time')->nullable(); // Allows NULL values
             $table->timestamp('end_time')->nullable(); // Allows NULL values
-            $table->decimal('price', 8, 2);
+            $table->integer('price')->unsigned()->default(200000);
             $table->text('describe');
             $table->boolean('status')->default(0);
             $table->timestamps();

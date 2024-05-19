@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ExpertDetail;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class UserController extends Controller
 {
     protected $user;
@@ -19,11 +23,11 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     /**
-    * @OA\Get(
-    *     path="/api/admin/users",
-    *     summary="Display all users",
-    *     tags={"List users"},
+    /**
+     * @OA\Get(
+     *     path="/api/admin/users",
+     *     summary="Display all users",
+     *     tags={"List users"},
      *     @OA\Response(response="200", description="Success"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=404, description="Not Found"),
@@ -38,7 +42,7 @@ class UserController extends Controller
             "success" => true,
             "message" => "Get all users successfully",
             "data" => $users
-        ],200);
+        ], 200);
     }
 
     /**
@@ -46,9 +50,58 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        // Kiểm tra thông tin người dùng cho các vai trò khác
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'role_id' => 'required|exists:roles,id',
+            'experience' => 'nullable|string', // Trường experience có thể null
+            'certificate' => 'nullable|string', // Trường certificate có thể null
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
+        // Tạo người dùng mới
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'address' => '',
+            'profile_picture' => asset('assets/img/avatar/avatar-4.png'),
+            'date_of_birth' => null,
+            'phone_number' => '',
+            'gender' => '',
+            'status' => true,
+            'role_id' => $request->role_id,
+        ]);
+
+        // Nếu vai trò là người dùng chuyên gia (role_id = 3) và có trường experience và certificate được cung cấp
+        if ($request->role_id == 3 && $request->has('experience') && $request->has('certificate')) {
+            // Kiểm tra xem đã có dữ liệu trong bảng expert_details tương ứng với user_id của người dùng mới hay không
+            $checkExpert = DB::table('expert_details')->where('user_id', $user->id)->exists();
+
+            // Nếu có dữ liệu, xóa dữ liệu cũ trước khi tạo mới
+            if ($checkExpert) {
+                DB::table('expert_details')->where('user_id', $user->id)->delete();
+            }
+            // Tạo chi tiết chuyên gia mới
+            ExpertDetail::create([
+                'user_id' => $user->id,
+                'certificate' => $request->certificate,
+                'experience' => $request->experience,
+                'count_rating' => 5
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Created successfully!',
+            'user' => $user
+        ], 201);
     }
 
     /**
@@ -69,16 +122,16 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     /**
-    * @OA\Get(
-    *     path="/api/user/user-profile/{id}",
-    *     summary="Display user profile",
-    *     tags={"User profile"},
-    *     @OA\Parameter(
-    *              name="id",
-    *              in="path",
-    *              description="User ID",
-    *              required=true,
-    *              @OA\Schema(type="integer")
+     * @OA\Get(
+     *     path="/api/user/user-profile/{id}",
+     *     summary="Display user profile",
+     *     tags={"User profile"},
+     *     @OA\Parameter(
+     *              name="id",
+     *              in="path",
+     *              description="User ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
      *      ),
      *     @OA\Response(response="200", description="Success"),
      *     @OA\Response(response=400, description="Bad request"),
@@ -89,12 +142,28 @@ class UserController extends Controller
     public function show($id)
     {
         //
-        $user = $this->user::where('role_id','=',2)->find($id);
-        if(empty($user)){
+        $user = $this->user::where('role_id', '=', 2)->find($id);
+        if (empty($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'user ID not found',
-                'data'=> null,
+                'data' => null,
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Show profile user successfully!',
+            'data' => $user,
+        ], 200);
+    }
+    public function showAdminProfile($id)
+    {
+        $user = $this->user::where('role_id', '=', 1)->find($id);
+        if (empty($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'user ID not found',
+                'data' => null,
             ], 404);
         }
         return response()->json([
@@ -121,25 +190,25 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     /**
-    * @OA\Put(
-    *     path="/api/admin/users/{id}",
-    *     summary="Update user status",
-    *     tags={"Update user status"},
-    *     @OA\Parameter(
-    *              name="id",
-    *              in="path",
-    *              description="User ID",
-    *              required=true,
-    *              @OA\Schema(type="integer")
-    *      ),
-    *     @OA\Parameter(
-    *              name="status",
-    *              in="query",
-    *              description="Status of the user",
-    *              required=true,
-    *              @OA\Schema(type="boolean")
-    *      ),
+    /**
+     * @OA\Put(
+     *     path="/api/admin/users/{id}",
+     *     summary="Update user status",
+     *     tags={"Update user status"},
+     *     @OA\Parameter(
+     *              name="id",
+     *              in="path",
+     *              description="User ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *              name="status",
+     *              in="query",
+     *              description="Status of the user",
+     *              required=true,
+     *              @OA\Schema(type="boolean")
+     *      ),
      *     @OA\Response(response="200", description="Success"),
      *     @OA\Response(response=400, description="Bad request"),
      *     @OA\Response(response=404, description="Not Found"),
@@ -149,7 +218,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::find($id);
-        if(empty($user)){
+        if (empty($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'user ID not found',
@@ -171,12 +240,12 @@ class UserController extends Controller
         $user = User::find($userID);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string', 
+            'name' => 'required|string',
             'email' => 'required|string|email',
             'password' => [
                 'required',
                 'string',
-                'min:8', 
+                'min:8',
                 'regex:/[A-Z]/', // Ít nhất một chữ cái viết hoa
                 'regex:/[a-z]/', // Ít nhất một chữ cái viết thường
                 'regex:/[0-9]/', // Ít nhất một ký tự số
@@ -191,7 +260,7 @@ class UserController extends Controller
             'gender' => 'string'
         ]);
 
-        if(empty($user)){
+        if (empty($user)) {
             return response()->json([
                 'success' => false,
                 'message' => 'user ID not found',
@@ -236,6 +305,20 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+
+        if (empty($user)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User ID not found',
+            ], 404);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User deleted successfully',
+        ], 200);
     }
 }

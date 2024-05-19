@@ -29,39 +29,82 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::prefix('admin')->middleware('role.admin')->group(function () {
-    Route::get('/comments', [CommentsPostController::class, 'index']);
-    Route::get('/expertDetail', [ExpertDetailController::class, 'index']);
+    // users
+    // Tạo người dùng mới.
+    Route::post('/users', [UserController::class, 'create'])->name('admin.users.create');
+    // Lấy danh sách người dùng.
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
+    // Cập nhật thông tin người dùng.
     Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
-    // contact
-    Route::get('/contacts', [ContactController::class, 'getAllContacts']);
-    Route::get('/contacts/{id}', [ContactController::class, 'getContactDetail']);
-    Route::post('/replyEmail', [ContactController::class, 'replyEmail']);
-    Route::post('/contacts', [ContactController::class, 'updateContactStatus']);
-    Route::delete('/contacts/{id}', [ContactController::class, 'deleteContact']);
-    //post
+    // Xóa người dùng.
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.delete');
+
+    //  Expert
+    //  tạo mới chuyên gia
+    Route::post('/experts', [UserController::class, 'create'])->name('admin.expert.create');
+    // Lấy danh sách chuyên gia.
+    Route::get('/experts', [ExpertDetailController::class, 'index']);
+    // Cập nhật thông tin chuyên gia.
+    Route::put('/experts/{id}', [UserController::class, 'update'])->name('admin.expert.update');
+    // Xóa chuyên gia.
+    Route::delete('/experts/{id}', [UserController::class, 'destroy'])->name('admin.expert.delete');
+
+    // Post
     Route::apiResource('posts', PostController::class);
-    Route::put('posts/update-status/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
+    Route::put('/posts/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
+
+    // comments
+    // Lấy danh sáchbình luận
+    Route::get('/comments', [CommentsPostController::class, 'index']);
+    // Tạo bình luận mới.
+    Route::post('/comments', [CommentsPostController::class, 'createPostByAdmin']);
+    // update status comment
+    Route::put('/comments/{commentId}', [CommentsPostController::class, 'updatePostByAdmin']);
+    // delete comment
+    Route::delete('/comments/{commentId}', [CommentsPostController::class, 'destroyPostByAdmin']);
+
     //booking
-    Route::get('/bookings',[BookingController::class,'getAllBookings']);
-});
-Route::get('/feedbacks',[FeedbackController::class,'getAllFeedbacks']);
-Route::post('/feedbacks/create',[FeedbackController::class,'createFeedbackExpert']);
-Route::prefix('user')->group(function () {
-    Route::get('/user-profile/{id}', [UserController::class, 'show'])->name('user.profile');
-    Route::patch('/update-user-profile', [UserController::class, 'updateUserProfile'])->name('update.user.profile');
-    Route::post('book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
+    // Lấy danh sách booking
+    Route::get('/bookings', [BookingController::class, 'getAllBookings']);
+    // lấy thông tin chi tiết booking
+    Route::get('/bookings/{id}', [BookingController::class, 'getOneBooking']);
+
+    // contact
+    // Lấy dânh dách contact
+    Route::get('/contacts', [ContactController::class, 'getAllContacts']);
+    //  Lấy thông tin chi tiết contacct
+    Route::get('/contacts/{id}', [ContactController::class, 'getContactDetail']);
+    //  Gửi mail phản hồi contact
+    Route::post('/replyEmail', [ContactController::class, 'replyEmail']);
+    //  Cập nhật trạng thái contact
+    Route::put('/contacts/{id}', [ContactController::class, 'updateContactStatus']);
+    //  Xóa contact
+    Route::delete('/contacts/{id}', [ContactController::class, 'deleteContact']);
+
+    //  Lấy thông tin profile admin
+    Route::get('/admin-profile/{id}', [UserController::class, 'showAdminProfile'])->name('admin.profile');
 });
 
-Route::prefix('experts')->group(function (){
+Route::get('/feedbacks', [FeedbackController::class, 'getAllFeedbacks']);
+Route::post('/feedbacks/create', [FeedbackController::class, 'createFeedbackExpert']);
+Route::prefix('user')->group(function () {
+    Route::get('/profile/{id}', [UserController::class, 'show'])->name('user.profile');
+    Route::patch('/profile', [UserController::class, 'updateUserProfile'])->name('update.user.profile');
+    Route::post('/book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
+});
+
+Route::prefix('experts')->group(function () {
     Route::get('/', [ExpertDetailController::class, 'getListExpert']);
-    Route::get('/expert-profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
-    Route::patch('/update-expert-profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
+    Route::get('/profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
+    Route::patch('/profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
     //calendar
     Route::post('/calendar/create', [CalendarController::class, 'createNewCalendar']);
     // serach experts
     Route::post('/search', [ExpertDetailController::class, 'search']);
+    // Filter expert
+    Route::post('/filter', [ExpertDetailController::class, 'filter']);
+
 
 });
 
@@ -70,7 +113,7 @@ Route::prefix('experts')->group(function (){
 Route::prefix('posts')->group(function () {
     // post
     // create a new post
-    Route::post('/create',[PostController::class,'store']);
+    Route::post('/create', [PostController::class, 'store']);
     Route::delete('/delete/{id}', [PostController::class, 'destroy']);
 
     // comment of the post
@@ -80,12 +123,9 @@ Route::prefix('posts')->group(function () {
     Route::post('/{postId}/comments/update/{commentId}', [CommentsPostController::class, 'update']);
     // delete comment
     Route::delete('/{postId}/comments/delete/{commentId}', [CommentsPostController::class, 'destroy']);
-
 });
 
 // auth api
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 //contact us
 Route::post('/contactUs', [ContactController::class, 'contactUs']);
-
-

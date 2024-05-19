@@ -13,18 +13,6 @@
                 "summary": "Login into the web application",
                 "description": "Log in to the web application",
                 "operationId": "8dcb70df1020986038d098cc08d05dae",
-                "parameters": [
-                    {
-                        "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "description": "CSRF token for authentication",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "eyJpdiI6IkFqTEs5enhxUk9vbWVJWVBoMXpPMFE9PSIsInZhbHVlIjoiaEhmL3ZCdXRpVDlYbGlFUFQwL1NJTlMzb1lSdE9UOFNSc0RNZnJ6ZElYbFVseXo5T2lYZ1p0N01MZEh3Nm5MNHl1U1B4NXZObzRzSGd1aUMwSG5PQVorRXAwY1NwTHkwb0RXdWJmQkdBQkwrMkM1Wi9NTjRuL3lZejVoaHllR0UiLCJtYWMiOiIzY2MzNjQ2OGJiMzBlODI4MzY3NWJmODMwZGJkOGFiYzViYTkxM2FkMGE2MzlhYzJhODVmNjllNWEwZDk2NGU1IiwidGFnIjoiIn0="
-                        }
-                    }
-                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -38,12 +26,12 @@
                                     "email": {
                                         "description": "Email address",
                                         "type": "string",
-                                        "example": "bao12@gmail.com"
+                                        "example": "john@example.com"
                                     },
                                     "password": {
                                         "description": "Password to login",
                                         "type": "string",
-                                        "example": "bao12@gmail.com"
+                                        "example": "password123"
                                     }
                                 },
                                 "type": "object"
@@ -207,6 +195,18 @@
                 "summary": "Log out the authenticated user",
                 "description": "Log out the currently authenticated user",
                 "operationId": "69281b12abb272c76871f19cb17ca563",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer YOUR_TOKEN_HERE"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "User successfully signed out",
@@ -240,8 +240,20 @@
                 "tags": [
                     "Show Bookings"
                 ],
-                "summary": "Display all bookings from database",
+                "summary": "Display all bookings from the database",
                 "operationId": "e02b626135501ab4454bdf20f953d839",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "Bearer token for authentication",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "Bearer YOUR_TOKEN_HERE"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success"

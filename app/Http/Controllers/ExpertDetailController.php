@@ -314,4 +314,19 @@ class ExpertDetailController extends Controller
             'data' => $experts,
         ], 200);
     }
+
+    // filter
+    public function filter(Request $request)
+    {
+        // Get all query parameters for filtering
+        $query = Calendar::query();
+        $price = $request->input('price');
+        // Execute the query and get the results
+        $calendar = $query->where("price",$price)->with('expertDetail')->get();
+        // Return the filtered results
+        return response()->json([
+            'success' => true,
+            'data' => $calendar,
+        ]);
+    }
 }

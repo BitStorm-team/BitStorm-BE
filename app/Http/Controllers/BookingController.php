@@ -10,75 +10,97 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use JWTAuth;
+
 class BookingController extends Controller
 {
     /**
      * @OA\Get(
      *     path="/api/admin/bookings",
-     *     summary="Display all bookings from database",
-     *      tags={"Show Bookings"},
+     *     summary="Display all bookings from the database",
+     *     tags={"Show Bookings"},
+     *     security={{"bearerAuth":{}}},
      *     @OA\Response(response="200", description="Success"),
-     *     security={{"bearerAuth":{}}}
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="Bearer token for authentication",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             example="Bearer YOUR_TOKEN_HERE"
+     *         )
+     *     ),
+     * @OA\SecurityScheme(
+     *         securityScheme="X-CSRF-TOKEN",
+     *         type="apiKey",
+     *         in="header",
+     *         name="X-CSRF-TOKEN",
+     *         description="CSRF Token"
+     *     )
      * )
      */
-    public function getAllBookings(){
-        $bookings = Booking::with('user','calendar.expertDetail.user')->paginate(10);
-        if(!empty($bookings)){
+
+
+    public function getAllBookings()
+    {
+        $bookings = Booking::with('user', 'calendar.expertDetail.user')->paginate(10);
+        if (!empty($bookings)) {
             return response()->json([
                 'success' => true,
                 'message' => 'Show all bookings successfully',
                 'data' => $bookings,
             ], 200);
-        }else{
+        } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Bookings not found',
-                'data'=> null,
+                'data' => null,
             ], 404);
         }
     }
 
-     /**
-    * @OA\Post(
-    *     path="/api/user/booking/{user_id}/book-calendar/{calendar_id}",
-    *     summary="Book calendar",
-    *     tags={"Book calendar"},
-    *     @OA\Parameter(
-    *              name="user_id",
-    *              in="path",
-    *              description="User ID",
-    *              required=true,
-    *              @OA\Schema(type="integer")
-    *      ),
-    *     @OA\Parameter(
-    *              name="calendar_id",
-    *              in="path",
-    *              description="Calendar ID",
-    *              required=true,
-    *              @OA\Schema(type="integer")
-    *      ),
-    *     @OA\Parameter(
-    *              name="note",
-    *              in="query",
-    *              description="Note",
-    *              required=false,
-    *              @OA\Schema(type="string")
-    *      ),
-    *     @OA\Response(response="200", description="Success", @OA\JsonContent()),
-    *     @OA\Response(response="400", description="Bad request", @OA\JsonContent()),
-    *     @OA\Response(response="401", description="Unauthorized", @OA\JsonContent()),
-    *     @OA\Response(response="404", description="Not Found", @OA\JsonContent()),
-    *     @OA\Response(response="417", description="Not Found", @OA\JsonContent()),
+    /**
+     * @OA\Post(
+     *     path="/api/user/booking/{user_id}/book-calendar/{calendar_id}",
+     *     summary="Book calendar",
+     *     tags={"Book calendar"},
+     *     @OA\Parameter(
+     *              name="user_id",
+     *              in="path",
+     *              description="User ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *              name="calendar_id",
+     *              in="path",
+     *              description="Calendar ID",
+     *              required=true,
+     *              @OA\Schema(type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *              name="note",
+     *              in="query",
+     *              description="Note",
+     *              required=false,
+     *              @OA\Schema(type="string")
+     *      ),
+     *     @OA\Response(response="200", description="Success", @OA\JsonContent()),
+     *     @OA\Response(response="400", description="Bad request", @OA\JsonContent()),
+     *     @OA\Response(response="401", description="Unauthorized", @OA\JsonContent()),
+     *     @OA\Response(response="404", description="Not Found", @OA\JsonContent()),
+     *     @OA\Response(response="417", description="Not Found", @OA\JsonContent()),
      *    security={{"bearerAuth":{}}}
      * )
      */
-    public function bookCalendar(Request $request, $calendarID){
-       $calendar = Calendar::find($calendarID);
+    public function bookCalendar(Request $request, $calendarID)
+    {
+        $calendar = Calendar::find($calendarID);
 
-       $user = $this->getUser($request);
-       $userID = $user->id;
+        $user = $this->getUser($request);
+        $userID = $user->id;
         $validator = Validator::make($request->all(), [
-            'note' => 'string', 
+            'note' => 'string',
         ]);
 
         if ($validator->fails()) {
@@ -96,16 +118,16 @@ class BookingController extends Controller
                 'data' => null
             ], 404);
         }
-    
+
         // Kiểm tra nếu lịch đã được đặt bởi người dùng khác
-        if($calendar->status == 0){
+        if ($calendar->status == 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'This calendar has already been booked by other users!',
                 'data' => null
             ], 409);
         }
-        
+
         // $user = Auth::user();
         if ($user->role_id != 2) {
             return response()->json([
@@ -114,13 +136,13 @@ class BookingController extends Controller
                 'data' => null
             ], 401);
         }
-        
+
         $booking = new Booking();
-        $booking->user_id = $userID; 
+        $booking->user_id = $userID;
         $booking->calendar_id = $calendarID;
         $booking->note = $request->note;
         $booking->status = 'New';
-        
+
         if ($booking->save()) {
             $calendar->status = 0;
             $calendar->save();
@@ -135,6 +157,25 @@ class BookingController extends Controller
                 'message' => 'Scheduling failed',
                 'data' => null
             ], 417);
+        }
+    }
+
+    //  get one booking
+    public function getOneBooking($id)
+    {
+        $bookings = Booking::with('user', 'calendar.expertDetail.user')->where('id',$id)->paginate(10);
+        if (!empty($bookings)) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Show one bookings successfully',
+                'data' => $bookings,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bookings not found',
+                'data' => null,
+            ], 404);
         }
     }
 }
