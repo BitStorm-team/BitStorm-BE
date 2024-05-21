@@ -142,5 +142,5 @@ require __DIR__ . '/auth.php';
 Route::get('/csrf-token', function () {
     return response()->json([
         'session_id' => session()->getId(),
-        'csrf_token' => csrf_token(),
+        'csrf_token' => $_COOKIE['XSRF-TOKEN'],
     ]);});
