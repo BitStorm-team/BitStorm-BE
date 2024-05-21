@@ -82,7 +82,6 @@ Route::prefix('posts')->group(function () {
     Route::post('/{postId}/comments/update/{commentId}', [CommentsPostController::class, 'update']);
     // delete comment
     Route::delete('/{postId}/comments/delete/{commentId}', [CommentsPostController::class, 'destroy']);
-
 });
 
 // auth api
