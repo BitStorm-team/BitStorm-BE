@@ -149,7 +149,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string||confirmed|min:6|max:25',
             'role_id' => 'required|exists:roles,id',
             'experience' => 'nullable|string', // Trường experience có thể null
             'certificate' => 'nullable|string', // Trường certificate có thể null

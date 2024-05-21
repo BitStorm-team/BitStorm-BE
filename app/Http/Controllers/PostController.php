@@ -105,7 +105,34 @@ class PostController extends Controller
             'data' => $post,
         ], 200);
     }
+    public function updatePostContent(Request $request,$id=0){
+        $user = $this->getUser($request);
+        $userId = $user->id;
+        $post = Post::where('id', $id)->where('user_id', $userId)->first();
+        if(empty($post)){
+            return response()->json([
+                'success' => false,
+                'message' => 'user not match',
+            ], 404);
+        }
+         // Validate incoming request
+        $request->validate([
+        'content' => 'required|string',
+        'is_anonymous' => 'required|boolean',
+            ]);
+        $data=[
+            'content'=>$request->content,
+            'is_anonymous'=>$request->is_anonymous,
+        ];
 
+            $post->update($data);
+
+            return response()->json([
+                'success'=>true,
+                'message' => 'Update post successfully',
+                'post' => $post
+            ], 200);
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -128,7 +155,6 @@ class PostController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Post and its comments deleted successfully!',
-            'data' => null,
         ], 200);
     }
 }
