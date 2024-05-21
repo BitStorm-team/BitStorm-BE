@@ -24,4 +24,8 @@ Route::get('/bookings', [BookingController::class, 'getAllBookings']);
 
 Route::get('/user-profile', [AuthController::class, 'userProfile']);
 
-
+Route::middleware('web')->get('/api/csrf-token', function () {
+    return response()->json([
+        'csrf_token' => csrf_token()
+    ]);
+});
