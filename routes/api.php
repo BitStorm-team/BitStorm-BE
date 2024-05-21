@@ -137,3 +137,8 @@ Route::post('/contactUs', [ContactController::class, 'contactUs']);
 
 // auth api
 require __DIR__ . '/auth.php';
+
+// csrf token
+Route::get('/csrf-token', function () {
+    return response()->json(['csrfToken' => csrf_token()]);
+});
