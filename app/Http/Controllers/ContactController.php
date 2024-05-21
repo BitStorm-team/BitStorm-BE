@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
 
 class ContactController extends Controller
-{   
+{
     // Định nghĩa quy tắc validation
     public $rules = [
         'email' => 'required|email',
@@ -46,7 +46,7 @@ class ContactController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'No contact list',
-            ],404);
+            ], 404);
         }
 
         return response()->json([
@@ -55,7 +55,7 @@ class ContactController extends Controller
             'data' => [
                 'contacts' => $contacts,
             ]
-        ],200);
+        ], 200);
     }
     // Get contact details
     /**
@@ -85,40 +85,40 @@ class ContactController extends Controller
                 'success' => true,
                 'message' => 'Success',
                 'data' => [
-                    'contact'=>$contact,
+                    'contact' => $contact,
                 ],
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Contact not found',
-            ],404);
+            ], 404);
         }
     }
 
     /**
- * @OA\Post(
- *     path="/api/admin/replyEmail",
- *     summary="Reply to email",
- *     tags={"Reply Email"},
- *     description="Reply to an email with a message",
- *     @OA\RequestBody(
- *         required=true,
- *         description="Request body",
- *         @OA\JsonContent(
- *             required={"email", "message"},
- *             @OA\Property(property="email", type="string", format="email", example="nguyenmaioc0@gmail.com"),
- *             @OA\Property(property="message", type="string", example="Your message goes here"),
- *         )
- *     ),
- *     @OA\Response(response=200, description="Email sent successfully"),
- *     @OA\Response(response=400, description="Bad request"),
- *     @OA\Response(response=500, description="Internal server error"),
- *     security={{"bearerAuth":{}}}
- * )
- */
+     * @OA\Post(
+     *     path="/api/admin/replyEmail",
+     *     summary="Reply to email",
+     *     tags={"Reply Email"},
+     *     description="Reply to an email with a message",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Request body",
+     *         @OA\JsonContent(
+     *             required={"email", "message"},
+     *             @OA\Property(property="email", type="string", format="email", example="nguyenmaioc0@gmail.com"),
+     *             @OA\Property(property="message", type="string", example="Your message goes here"),
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Email sent successfully"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=500, description="Internal server error"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
     public function replyEmail(Request $request)
-    {   
+    {
         $validator = Validator::make($request->only('email', 'message'), [
             'email' => 'required|email',
             'message' => 'required|string',
@@ -128,11 +128,11 @@ class ContactController extends Controller
                 'success' => false,
                 'message' => $validator->errors()->first(),
             ], 400);
-        }else{
+        } else {
             $user_mail = $request->email;
             $subject = 'Email reply your contact';
             $body = $request->message;
-            try{
+            try {
                 Mail::to($user_mail)->send(new SendMail($subject, $body));
                 return response()->json(
                     [
@@ -143,13 +143,14 @@ class ContactController extends Controller
                             'subject' => $subject,
                             'body' => $body,
                         ],
-                    ],200
+                    ],
+                    200
                 );
-            }catch(Exception $e){
+            } catch (Exception $e) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Error sending email: ' . $e->getMessage(),
-                ],500);
+                ], 500);
             }
         }
     }
@@ -180,8 +181,8 @@ class ContactController extends Controller
      *     )
      * )
      */
-    public function updateContactStatus(Request $request){
-        $id = $request->id;
+    public function updateContactStatus(Request $request, $id)
+    {
         $status = $request->status;
         $contact = Contact::find($id);
         if ($contact) {
@@ -190,46 +191,46 @@ class ContactController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Contact status updated successfully',
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Contact not found',
-            ],404);
+            ], 404);
         }
     }
     /**
- * @OA\Delete(
- *     path="/api/admin/contacts/{id}",
- *     summary="Delete one contact detail",
- *     tags={"Delete Contact"},
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         description="Contact ID",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Response(response=200, description="Success"),
- *     @OA\Response(response=400, description="Bad request"),
- *     @OA\Response(response=404, description="Not Found"),
- *     security={{"bearerAuth":{}}}
- * )
- */
-    public function deleteContact(Request $request){
-        $id = $request->id;
+     * @OA\Delete(
+     *     path="/api/admin/contacts/{id}",
+     *     summary="Delete one contact detail",
+     *     tags={"Delete Contact"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Contact ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Success"),
+     *     @OA\Response(response=400, description="Bad request"),
+     *     @OA\Response(response=404, description="Not Found"),
+     *     security={{"bearerAuth":{}}}
+     * )
+     */
+    public function deleteContact(Request $request, $id)
+    {
         $contact = Contact::find($id);
         if ($contact) {
             $contact->delete();
             return response()->json([
                 'success' => true,
                 'message' => 'Contact deleted successfully',
-            ],200);
+            ], 200);
         } else {
             return response()->json([
                 'success' => false,
                 'message' => 'Contact not found',
-            ],404);
+            ], 404);
         }
     }
     /**
@@ -273,7 +274,8 @@ class ContactController extends Controller
      *     ),
      * )
      */
-    public function contactUs(Request $request) {
+    public function contactUs(Request $request)
+    {
         $validator = Validator::make($request->only('email', 'message'), [
             'email' => 'required|email',
             'message' => 'required|string',
@@ -283,7 +285,7 @@ class ContactController extends Controller
                 'success' => false,
                 'message' => $validator->errors()->first(),
             ], 400);
-        }else{
+        } else {
             $user = Auth::user();
             if ($user) {
                 try {
@@ -296,7 +298,7 @@ class ContactController extends Controller
                         'success' => true,
                         'message' => 'Your message has been sent successfully. We will respond as soon as possible.',
                     ], 200);
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Error saving contact information: ' . $e->getMessage(),
@@ -309,6 +311,8 @@ class ContactController extends Controller
                 ], 401);
             }
         }
-    }    
-    
+    }
+    // update
+
+ 
 }

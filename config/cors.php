@@ -14,13 +14,17 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', '/csrf-token'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
-
+    // Add multiple domains here
+    'allowed_origins' => [
+        env('FRONTEND_URL', 'http://localhost:3000'),
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://localhost:3003',
+    ],
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],

@@ -90,7 +90,7 @@ class CalendarController extends Controller
                         'message' => 'There is already a calendar within this time range',
                     ], 400);
                 }
-                
+
                 $calendar = new Calendar();
                 $calendar->expert_id = $user->id;
                 $calendar->start_time = $request->start_time;
@@ -98,7 +98,7 @@ class CalendarController extends Controller
                 $calendar->price = $request->price;
                 $calendar->describe = $request->describe;
                 $calendar->save();
-                
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Create new calendar successfully',
@@ -115,6 +115,62 @@ class CalendarController extends Controller
                 'message' => 'Please log in as an expert to create a new calendar',
             ], 401);
         }
-    }      
+    }
+    public function update(Request $request, $id)
+    {
+        $user = $this->getUser($request);
+        $validator = Validator::make($request->all(), [
+            'start_time' => 'nullable|date',
+            'end_time' => 'nullable|date|after:start_time',
+            'price' => 'required|numeric|min:0',
+            'describe' => 'required|string|min:10',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+        if($user->role_id === 3){
+            $calendar = Calendar::find($id)->where('expert_id',$user->id);
+        }
+
+        if (!$calendar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calendar not found',
+            ], 404);
+        }
+
+        $calendar->update($validator->validated());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Calendar updated successfully',
+        ], 200);
+    }
+
+    public function delete(Request $request, $id)
+    {
+        $user = $this->getUser($request);
+
+        $calendar = Calendar::where('expert_id', $user->id)->find($id);
+    
+        if (!$calendar) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Calendar not found',
+            ], 404);
+        }
+        if($user->role_id === 3){
+            $calendar->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Calendar deleted successfully',
+        ], 200);
+    }
 }
 

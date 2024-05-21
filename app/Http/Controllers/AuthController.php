@@ -1,6 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
+
 use App\Models\ExpertDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,8 +41,8 @@ class AuthController extends Controller
      *          required=true,
      *          @OA\JsonContent(
      *              required={"email", "password"},
-     *              @OA\Property(property="email", type="string", example="bao12@gmail.com", description="Email address"),
-     *              @OA\Property(property="password", type="string", example="bao12@gmail.com", description="Password to login"),
+     *              @OA\Property(property="email", type="string", example="john@example.com", description="Email address"),
+     *              @OA\Property(property="password", type="string", example="password123", description="Password to login"),
      *          )
      *      ),
      *      @OA\Response(
@@ -64,17 +64,7 @@ class AuthController extends Controller
      *      @OA\Response(
      *          response=500,
      *          description="Internal server error. Failed to log in."
-     *      ),
-     *      @OA\Parameter(
-     *          name="X-CSRF-TOKEN",
-     *          in="header",
-     *          description="CSRF token for authentication",
-     *          required=true,
-     *          @OA\Schema(
-     *              type="string",
-     *              example="eyJpdiI6IkFqTEs5enhxUk9vbWVJWVBoMXpPMFE9PSIsInZhbHVlIjoiaEhmL3ZCdXRpVDlYbGlFUFQwL1NJTlMzb1lSdE9UOFNSc0RNZnJ6ZElYbFVseXo5T2lYZ1p0N01MZEh3Nm5MNHl1U1B4NXZObzRzSGd1aUMwSG5PQVorRXAwY1NwTHkwb0RXdWJmQkdBQkwrMkM1Wi9NTjRuL3lZejVoaHllR0UiLCJtYWMiOiIzY2MzNjQ2OGJiMzBlODI4MzY3NWJmODMwZGJkOGFiYzViYTkxM2FkMGE2MzlhYzJhODVmNjllNWEwZDk2NGU1IiwidGFnIjoiIn0=",
-     *          ),
-     *      ),
+     *      )
      * )
      **/
 
@@ -233,7 +223,25 @@ class AuthController extends Controller
      *          response=401,
      *          description="Unauthorized. Authentication is required."
      *      ),
-     *      security={{"bearerAuth": {}}}
+     *  @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="Bearer token for authentication",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             example="Bearer YOUR_TOKEN_HERE"
+     *         )
+     *     ),
+     *      security={{"bearerAuth": {}}},
+     *  @OA\SecurityScheme(
+     *         securityScheme="X-CSRF-TOKEN",
+     *         type="apiKey",
+     *         in="header",
+     *         name="X-CSRF-TOKEN",
+     *         description="CSRF Token"
+     *     )
+     * )
      * )
      */
 
@@ -307,4 +315,5 @@ class AuthController extends Controller
             'user' => $user,
         ], 201);
     }
+
 }
