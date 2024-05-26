@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Carbon;
-use App\Models\CommentsPost;
-use App\Models\Post;
-use GuzzleHttp\Promise\Create;
-use Illuminate\Http\Request;
-use DateTime;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 
-class CommentsPostController extends Controller
+class CommentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,7 +29,7 @@ class CommentsPostController extends Controller
      */
     public function index()
     {
-        $commentsPosts = CommentsPost::with('user', 'replies.user')->paginate(10);
+        $commentsPosts = Comment::with('user', 'replies.user')->paginate(10);
         return response()->json([
             'success' => true,
             'message' => 'Show all comments successfully!',
@@ -93,34 +87,39 @@ class CommentsPostController extends Controller
     {
         //  lấy user hiện tại
         $user = $this->getUser($request);
+        try {
+            $validator = $request->validate([
+                'content' => 'required|string',
+                'parent_id' => 'nullable|exists:comments,id',
+            ]);
 
-        $validator = Validator::make($request->all(), [
-            'content' => 'required'
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            $data = [
+                'post_id' => $postId,
+                'user_id' => $user->id,
+                'content' => $validator['content'],
+                'status' => 1,
+                'parent_id' => $request->parent_id,
+            ];
+            $comment = Comment::create($data);
+            return response()->json([
+                'success' => true,
+                'message' => 'Created comment post successfully!',
+                'data' => $comment,
+            ], 201);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation Error',
+                'errors' => $e->errors()
+            ], 422);
         }
-
-        $data = [
-            'post_id' => $postId,
-            'user_id' => $user->id,
-            'content' => $request->content,
-            'status' => 1
-        ];
-        $commentsPost = CommentsPost::create($data);
-        return response()->json([
-            'success' => true,
-            'message' => 'Created comment post successfully!',
-            'data' => $commentsPost,
-        ], 200);
     }
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\CommentsPost  $commentsPost
+     * @param Comment $commentsPost
      * @return \Illuminate\Http\Response
      */
-    public function show(CommentsPost $commentsPost)
+    public function show(Comment $commentsPost)
     {
         //
     }
@@ -129,7 +128,7 @@ class CommentsPostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CommentsPost  $commentsPost
+     * @param Comment $commentsPost
      * @return \Illuminate\Http\Response
      */
     /**
@@ -185,7 +184,7 @@ class CommentsPostController extends Controller
             $user = $this->getUser($request);
 
             // Find comment post by id and post_id
-            $comment = CommentsPost::where('id', $commentId)
+            $comment = Comment::where('id', $commentId)
                 ->where('post_id', $postId)
                 ->firstOrFail();
 
@@ -228,7 +227,7 @@ class CommentsPostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\CommentsPost  $commentsPost
+     * @param Comment $commentsPost
      * @return \Illuminate\Http\Response
      */
     /**
@@ -260,7 +259,7 @@ class CommentsPostController extends Controller
     public function destroy(Request $request, $postId, $commentId)
     {
         $user = $this->getUser($request);
-        $comment = CommentsPost::where('id', $commentId)
+        $comment = Comment::where('id', $commentId)
             ->where('post_id', $postId)
             ->where('user_id', $user->id)
             ->firstOrFail();
@@ -298,10 +297,10 @@ class CommentsPostController extends Controller
         $data = [
             'post_id' => $request->post_id,
             'user_id' => $request->user_id,
-            'content' => $request->content,
+            'content' => $validator['content'],
             'status' =>  $request->status, // Validate status as an integer
         ];
-        $commentsPost = CommentsPost::create($data);
+        $commentsPost = Comment::create($data);
         return response()->json([
             'success' => true,
             'message' => 'Created comment post successfully!',
@@ -326,7 +325,7 @@ class CommentsPostController extends Controller
             }
 
             // Find comment post by id
-            $comment = CommentsPost::where('id', $id)->firstOrFail();
+            $comment = Comment::where('id', $id)->firstOrFail();
 
             // Update the comment with validated data
             $comment->update($validator->validated());
@@ -359,7 +358,7 @@ class CommentsPostController extends Controller
     {
         try {
             // Find the comment post by id
-            $comment = CommentsPost::where('id', $id)->firstOrFail();
+            $comment = Comment::where('id', $id)->firstOrFail();
 
             // Soft delete the comment
             $comment->delete();

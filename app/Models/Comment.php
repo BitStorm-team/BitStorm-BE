@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CommentsPost extends Model
+class Comment extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -18,7 +18,8 @@ class CommentsPost extends Model
         'content',
         'status',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'parent_id'
     ];
 
     public function post()
@@ -33,13 +34,14 @@ class CommentsPost extends Model
 
     public function replies()
     {
-        return $this->hasMany(RepliesPost::class,'comment_post_id');
+        return $this->hasMany(Comment::class, 'parent_id')->with('replies');
     }
+
     protected static function boot()
     {
         parent::boot();
 
-        static::created(function (CommentsPost $commentPost) {
+        static::created(function (Comment $commentPost) {
             $post = Post::find($commentPost->post_id);
             if ($post) {
                 $post->comment_count++;

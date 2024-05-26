@@ -11,7 +11,7 @@ class RepliesPost extends Model
 
     public function comment()
     {
-        return $this->belongsTo(CommentsPost::class,'comment_post_id');
+        return $this->belongsTo(Comment::class,'comment_post_id');
     }
 
     public function user()
@@ -21,9 +21,9 @@ class RepliesPost extends Model
     protected static function boot()
     {
         parent::boot();
-        
+
         static::created(function (RepliesPost $replyPost) {
-            $commentPost = CommentsPost::find($replyPost->comment_post_id);
+            $commentPost = Comment::find($replyPost->comment_post_id);
             if ($commentPost) {
                 $post = Post::find($commentPost->post_id);
                 if ($post) {
