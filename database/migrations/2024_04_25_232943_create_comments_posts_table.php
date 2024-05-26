@@ -14,10 +14,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('comments_posts', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('post_id');
+            $table->foreignId('post_id')->constrained();
+            $table->foreignId('user_id')->constrained();
+            $table->foreignId('parent_id')->nullable()->constrained('comments');
             $table->text('content');
             $table->boolean('status')->default(1);
             $table->softDeletes();
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comments_posts');
+        Schema::dropIfExists('comments');
     }
 };

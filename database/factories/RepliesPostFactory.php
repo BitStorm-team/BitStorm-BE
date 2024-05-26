@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\User;
 use App\Models\RepliesPost;
-use App\Models\CommentsPost;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,9 +19,9 @@ class RepliesPostFactory extends Factory
      */
     public function definition()
     {
-        
+
         $user = User::where('role_id', 2)->inRandomOrder()->firstOrFail();
-        $commentPost = CommentsPost::inRandomOrder()->firstOrFail();
+        $commentPost = Comment::inRandomOrder()->firstOrFail();
         return [
             'user_id'=>$user->id,
             'comment_post_id' =>$commentPost->id,
