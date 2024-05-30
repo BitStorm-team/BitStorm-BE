@@ -53,7 +53,7 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
     // Post
     Route::apiResource('posts', PostController::class);
     Route::put('/posts/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
-
+    Route::post('/posts',[PostController::class, 'createPost'])->name('admin.post.create');
     // comments
     // Lấy danh sáchbình luận
     Route::get('/comments', [CommentController::class, 'index']);
