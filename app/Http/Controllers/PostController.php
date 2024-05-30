@@ -91,7 +91,7 @@ class PostController extends Controller
         $post = Post::with([
             'user',
             'comments' => function ($query) {
-                $query->whereNull('parent_id')->with('replies');
+                $query->whereNull('parent_id')->with('replies','user');
             }
         ])->findOrFail($postId);
         if (empty($post)) {
