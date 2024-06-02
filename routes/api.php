@@ -53,7 +53,7 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
     // Post
     Route::apiResource('posts', PostController::class);
     Route::put('/posts/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
-    Route::post('/posts',[PostController::class, 'createPost'])->name('admin.post.create');
+    Route::post('/posts', [PostController::class, 'createPost'])->name('admin.post.create');
     // comments
     // Lấy danh sáchbình luận
     Route::get('/comments', [CommentController::class, 'index']);
@@ -104,6 +104,8 @@ Route::prefix('experts')->group(function () {
     Route::get('/profile/{id}', [ExpertDetailController::class, 'show'])->name('expert.profile');
     Route::patch('/profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
+    Route::get('/{expertId}/calendars', [CalendarController::class, 'getCalendarsByExpertId']);
+    Route::get('/{expertId}/calendars/{id}', [CalendarController::class, 'getCalendarByIdAndExpertId']);
     //calendar
     Route::post('/calendar', [CalendarController::class, 'createNewCalendar']);
     //  update contact
