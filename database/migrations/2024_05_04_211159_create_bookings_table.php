@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('calendar_id');
             $table->text('note')->nullable();
             $table->string('status')->default("New");
+            $table->string("link_room")->default('https://meet.google.com/enm-rbyg-lyw');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
             $table->foreign('user_id')->references('id')->on('users');

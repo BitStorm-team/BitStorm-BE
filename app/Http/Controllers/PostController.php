@@ -16,13 +16,12 @@ class PostController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $perPage = $request->input('per_page', 10);
         $posts = Post::with([
             'user',
             'comments' => function ($query) {
                 $query->whereNull('parent_id');
             }
-        ])->paginate($perPage);
+        ])->get();
         return response()->json([
             'success' => true,
             'message' => 'Show all posts successfully!',
@@ -59,7 +58,28 @@ class PostController extends Controller
             'post' => $post
         ], 201);
     }
+    public function createPost(Request $request): JsonResponse
+    {
+        // Validate incoming request
+        $validated = $request->validate([
+            'user_id'=>'required',
+            'content' => 'required|string',
+            'is_anonymous' => 'required|boolean',
+        ]);
+        $data = [
+            'user_id' => $validated['user_id'],
+            'content' => $validated['content'],
+            'is_anonymous' => $request->is_anonymous,
+        ];
 
+        $post = Post::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Create post successfullyy',
+            'post' => $post
+        ], 201);
+    }
     /**
      * Display the specified resource.
      *
@@ -71,7 +91,7 @@ class PostController extends Controller
         $post = Post::with([
             'user',
             'comments' => function ($query) {
-                $query->whereNull('parent_id')->with('replies');
+                $query->whereNull('parent_id')->with('replies','user');
             }
         ])->findOrFail($postId);
         if (empty($post)) {

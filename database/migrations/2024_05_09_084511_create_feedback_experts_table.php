@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('feedback_experts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('booking_id');
-            $table->foreign('booking_id')->references('id')->on('bookings');
             $table->integer('rating');
             $table->text('content');
             $table->timestamps();
+            //  foreign key
+            $table->foreign('booking_id')->references('id')->on('bookings');
         });
     }
 
