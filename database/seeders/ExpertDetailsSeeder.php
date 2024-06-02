@@ -40,7 +40,7 @@ class ExpertDetailsSeeder extends Seeder
                 $existingDetail->update([
                     'experience' => $experience,
                     'certificate' => $certificate,
-                    'average_rating' => $faker->randomFloat(1, 0, 5),
+                    'average_rating' => $faker->randomFloat(1, 3, 5),
                 ]);
             } else {
 
