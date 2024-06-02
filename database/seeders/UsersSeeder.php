@@ -26,7 +26,7 @@ class UsersSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('admin@gmail.com'),
                 'address' => '123 Main St',
-                'profile_picture' => 'profile.jpg',
+                'profile_picture' => 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-photo-men-doctor-physician-chest-smiling-png-image_13143575.png',
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '1234567890',
                 'gender' => 'male',
@@ -42,7 +42,7 @@ class UsersSeeder extends Seeder
                 'email_verified_at' => now(),
                 'password' => Hash::make('vanthu@gmail.com'),
                 'address' => '123 Main St',
-                'profile_picture' => 'profile.jpg',
+                'profile_picture' => 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-photo-men-doctor-physician-chest-smiling-png-image_13143575.png',
                 'date_of_birth' => '1990-01-01',
                 'phone_number' => '0958494003',
                 'gender' => 'female',
@@ -53,7 +53,7 @@ class UsersSeeder extends Seeder
             ]
             ];
         DB::table('users')->insert($data);
-        User::factory()->count(10)->create();
-        User::factory()->expert()->count(10)->create();
+        User::factory()->count(50)->create();
+        User::factory()->expert()->count(50)->create();
     }
     }

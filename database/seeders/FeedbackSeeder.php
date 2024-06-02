@@ -14,13 +14,6 @@ class FeedbackSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
-            [
-               'booking_id' => 1,
-               'rating' => 5,
-               'content' => "Bác sĩ này đẹp trai quá",
-            ]
-        ];
-        DB::table('feedback_experts')->insert($data);
+        \App\Models\FeedbackExpert::factory(50)->create();
     }
 }

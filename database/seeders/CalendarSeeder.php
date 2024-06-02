@@ -15,6 +15,6 @@ class CalendarSeeder extends Seeder
     public function run()
     {
         // Sử dụng factory để tạo 50 bản ghi cho bảng `calendars`
-        \App\Models\Calendar::factory(10)->create();
+        \App\Models\Calendar::factory(50)->create();
     }
 }
