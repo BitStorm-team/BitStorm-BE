@@ -105,43 +105,39 @@ class BookingController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'success' => false,
                 'message' => $validator->errors()->first(),
-                'data' => null
             ], 400); //Bad request
         }
 
         if (!$calendar) {
             return response()->json([
-                'success' => false,
                 'message' => 'The calendar does not exist!',
-                'data' => null
             ], 404);
         }
 
         // Kiểm tra nếu lịch đã được đặt bởi người dùng khác
         if ($calendar->status == 0) {
             return response()->json([
-                'success' => false,
                 'message' => 'This calendar has already been booked by other users!',
-                'data' => null
             ], 409);
         }
 
         // $user = Auth::user();
         if ($user->role_id != 2) {
             return response()->json([
-                'success' => false,
                 'message' => 'You are not authorized to book the calendar!',
-                'data' => null
             ], 401);
         }
+
+        // generate a new google meet link here
+        $linkRoom = $this->generateRandomGoogleMeetLink();
 
         $booking = new Booking();
         $booking->user_id = $userID;
         $booking->calendar_id = $calendarID;
         $booking->note = $request->note;
         $booking->status = 'New';
+        $booking->link_room = 'https://meet.google.com/' . $linkRoom;
 
         if ($booking->save()) {
             $calendar->status = 0;
@@ -163,7 +159,7 @@ class BookingController extends Controller
     //  get one booking
     public function getOneBooking($id)
     {
-        $bookings = Booking::with('user', 'calendar.expertDetail.user')->where('id',$id)->paginate(10);
+        $bookings = Booking::with('user', 'calendar.expertDetail.user')->where('id', $id)->paginate(10);
         if (!empty($bookings)) {
             return response()->json([
                 'success' => true,
@@ -177,5 +173,26 @@ class BookingController extends Controller
                 'data' => null,
             ], 404);
         }
+    }
+
+    public function generateRandomGoogleMeetLink()
+    {
+        $characters = 'abcdefghijklmnopqrstuvwxyz';
+        $googleMeetLink = '';
+        for ($i = 0; $i < 3; $i++) {
+            if ($i == 1) {
+                for ($j = 0; $j < 4; $j++) {
+                    $googleMeetLink .= $characters[rand(0, strlen($characters) - 1)];
+                }
+            } else {
+                for ($j = 0; $j < 3; $j++) {
+                    $googleMeetLink .= $characters[rand(0, strlen($characters) - 1)];
+                }
+            }
+            if ($i < 2) {
+                $googleMeetLink .= '-';
+            }
+        }
+        return $googleMeetLink;
     }
 }
