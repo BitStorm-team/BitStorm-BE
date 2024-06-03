@@ -23,13 +23,13 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => bcrypt('password'), // You may want to change this
             'address' => $this->faker->address,
-            'profile_picture' => null,
+            'profile_picture' => 'https://png.pngtree.com/png-clipart/20230927/original/pngtree-photo-men-doctor-physician-chest-smiling-png-image_13143575.png',
             'date_of_birth' => $this->faker->date(),
             'phone_number' => $this->faker->phoneNumber,
             'gender' => $this->faker->randomElement(['male', 'female']),
             'role_id' => $this->faker->randomElement([2]), // Randomly select role_id 2 or 3
             'remember_token' => Str::random(10),
-        ];  
+        ];
     }
 
     /**

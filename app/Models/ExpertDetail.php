@@ -9,7 +9,7 @@ class ExpertDetail extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'experience', 'certificate'];
+    protected $fillable = ['user_id', 'experience', 'certificate', 'average_rating'];
     protected $primaryKey = 'user_id';
     public function getAllExpert()
     {

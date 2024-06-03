@@ -27,7 +27,6 @@ class DatabaseSeeder extends Seeder
             ExpertDetailsSeeder::class,
             PostSeeder::class,
             CommentSeeder::class,
-            RepliesPostSeeder::class,
             CalendarSeeder::class,
             BookingSeeder::class,
             FeedbackSeeder::class,

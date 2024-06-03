@@ -16,5 +16,5 @@ class FeedbackExpert extends Model
     {
         return $this->belongsTo(Booking::class,'booking_id');
     }
-    
+
 }
