@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Nette\Schema\Expect;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ExpertDetailController extends Controller
 {
@@ -84,13 +84,19 @@ class ExpertDetailController extends Controller
         $calendars = Calendar::where('expert_id', $id)
             ->where('start_time', '>=', $currentDateTime)
             ->get();
-        //  suggest experts by average_rating
-        $suggestExperts = ExpertDetail::where('average_rating', 'like', '%' . $expertDetail->average_rating . '%')->get();
+
+        $feedback = DB::table('bookings')
+        ->join('feedback_experts', 'bookings.id', '=', 'feedback_experts.booking_id')
+        ->where('bookings.user_id', '=', $id)
+        ->select('feedback_experts.*')
+        ->get();
+
+
         // Kết hợp thông tin từ $user và $expertDetail vào một mảng
         $data = [
             'expertDetail' => $expertDetail,
             'schedules' => $calendars,
-            'suggestExperts' => $suggestExperts,
+            'feedback' => $feedback
         ];
         // Trả về view với dữ liệu đã lấy được
         return response()->json([
