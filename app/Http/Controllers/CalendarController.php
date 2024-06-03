@@ -175,55 +175,56 @@ class CalendarController extends Controller
     }
 
     public function getCalendarsByExpertId(Request $request, $expertId)
-{
-    $user = $this->getUser($request);
+    {
+        $user = $this->getUser($request);
 
-    if ($user->role_id !== 3) {
+        if ($user->role_id !== 3) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized to access calendars of this expert',
+            ], 403);
+        }
+        $calendars = Calendar::with(['expertDetail', 'expertDetail.user'])
+        ->where('expert_id', $expertId)
+        ->paginate(10);
+        if ($calendars->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No calendars found for the specified expert ID',
+            ], 404);
+        }
+
         return response()->json([
-            'success' => false,
-            'message' => 'Unauthorized to access calendars of this expert',
-        ], 403);
+            'success' => true,
+            'data' => $calendars,
+        ], 200);
     }
-    
-    $calendars = Calendar::where('expert_id', $expertId)->get();
-
-    if ($calendars->isEmpty()) {
-        return response()->json([
-            'success' => false,
-            'message' => 'No calendars found for the specified expert ID',
-        ], 404);
-    }
-
-    return response()->json([
-        'success' => true,
-        'data' => $calendars,
-    ], 200);
-}
 
     public function getCalendarByIdAndExpertId(Request $request, $expertId, $id)
     {
         $user = $this->getUser($request);
-    
+
         if ($user->role_id !== 3) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to access this calendar',
             ], 403);
         }
-    
-        $calendar = Calendar::where('id', $id)->where('expert_id', $expertId)->firstOrFail();
-    
+        $calendar = Calendar::with(['expertDetail', 'expertDetail.user'])
+        ->where('expert_id', $expertId)
+        ->where('id',$id)
+        ->firstOrFail();
         if (!$calendar) {
             return response()->json([
                 'success' => false,
                 'message' => 'Calendar not found for the specified ID and expert ID',
             ], 404);
         }
-    
+
         return response()->json([
             'success' => true,
             'data' => $calendar,
         ], 200);
     }
-    
+
 }
