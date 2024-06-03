@@ -53,7 +53,7 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
     // Post
     Route::apiResource('posts', PostController::class);
     Route::put('/posts/{id}', [PostController::class, 'updatePostStatus'])->name('admin.post.update.status');
-    Route::post('/posts',[PostController::class, 'createPost'])->name('admin.post.create');
+    Route::post('/posts', [PostController::class, 'createPost'])->name('admin.post.create');
     // comments
     // Lấy danh sáchbình luận
     Route::get('/comments', [CommentController::class, 'index']);
@@ -96,6 +96,9 @@ Route::prefix('user')->group(function () {
     Route::get('/profile/{id}', [UserController::class, 'show'])->name('user.profile');
     Route::patch('/profile', [UserController::class, 'updateUserProfile'])->name('update.user.profile');
     Route::post('/book-calendar/{calendar_id}', [BookingController::class, 'bookCalendar'])->name('user.book.calendar');
+    //booking
+    Route::get('/{userId}/bookings', [BookingController::class, 'getAllBookingsByUserId']);
+    Route::get('/{userId}/bookings/{bookingId}', [BookingController::class, 'getBookingByUserIdAndBookingId']);
 });
 
 // expert routes
@@ -105,6 +108,8 @@ Route::prefix('experts')->group(function () {
     Route::patch('/profile', [ExpertDetailController::class, 'updateExpertProfile'])->name('update.expert.profile');
     Route::get('/{id}', [ExpertDetailController::class, 'getExpertDetail']);
     //calendar
+    Route::get('/{expertId}/calendars', [CalendarController::class, 'getCalendarsByExpertId']);
+    Route::get('/{expertId}/calendars/{id}', [CalendarController::class, 'getCalendarByIdAndExpertId']);
     Route::post('/calendar', [CalendarController::class, 'createNewCalendar']);
     //  update contact
     Route::put('/calendar/{id}', [CalendarController::class, 'update']);
@@ -114,6 +119,9 @@ Route::prefix('experts')->group(function () {
     Route::post('/search', [ExpertDetailController::class, 'search']);
     // Filter expert
     Route::post('/filter', [ExpertDetailController::class, 'filter']);
+    //boooking
+    Route::get('/{expertId}/bookings', [BookingController::class, 'getAllBookingsByExpertId']);
+    Route::get('/{expertId}/bookings/{bookingId}', [BookingController::class, 'getBookingByExpertIdAndBookingId']);
 });
 
 // post
