@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('comment_count')->default(0);
             $table->boolean('status')->default(1);
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 
