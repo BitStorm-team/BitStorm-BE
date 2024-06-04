@@ -171,21 +171,21 @@ class PostController extends Controller
      * @return Response
      */
     public function destroy($id)
-    {
-        $post = Post::with('comments', 'comments.replies')->find($id);
-        if (empty($post)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'PostID not found',
-                'data' => null,
-            ], 404);
-        }
-        $post->comments()->delete();
-        $post->delete();
+        {
+            $post = Post::with('comments', 'comments.replies')->find($id);
+            if (empty($post)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'PostID not found',
+                    'data' => null,
+                ], 404);
+            }
+            $post->comments()->delete();
+            $post->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post and its comments deleted successfully!',
-        ], 200);
-    }
+            return response()->json([
+                'success' => true,
+                'message' => 'Post and its comments deleted successfully!',
+            ], 200);
+        }
 }
