@@ -129,7 +129,7 @@ Route::prefix('posts')->group(function () {
     // post
     // create a new post
     Route::post('/create', [PostController::class, 'store']);
-    Route::delete('/delete/{id}', [PostController::class, 'destroy']);
+    Route::delete('/delete/{id}', [PostController::class, 'deletePost']);
     Route::get('/{postId}', [PostController::class, 'show']);
     Route::get('/', [PostController::class, 'index']);
     // comment of the post
