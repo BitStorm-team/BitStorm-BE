@@ -20,7 +20,8 @@ class PostController extends Controller
             'user',
             'comments' => function ($query) {
                 $query->whereNull('parent_id');
-            }
+            },
+            'comments.user'
         ])->get();
         return response()->json([
             'success' => true,
