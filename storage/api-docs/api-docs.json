@@ -487,7 +487,7 @@
                     "Comments"
                 ],
                 "summary": "Get all comments",
-                "operationId": "faa69030aaa43aa3f648878d9f45d8ad",
+                "operationId": "dfd0a9246dd0ae6fc15fda5ba2f5ce68",
                 "responses": {
                     "200": {
                         "description": "All Comments"
@@ -513,7 +513,7 @@
                 ],
                 "summary": "Create a new comment post",
                 "description": "Create a new comment post with the provided data",
-                "operationId": "93bf8d6cd5bb5e81c021e1b273215a95",
+                "operationId": "cceaf0671472c8f17d28de84b9e7d6f2",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -595,7 +595,7 @@
                 ],
                 "summary": "Update a comment post by ID",
                 "description": "Update a comment post by its ID",
-                "operationId": "d00fd47499ba53fa16601b9f881e5541",
+                "operationId": "ec70e2b07b5bd9e60c7cf3394ffbcf49",
                 "requestBody": {
                     "description": "Request body",
                     "required": true,
@@ -647,7 +647,7 @@
                     "Comments"
                 ],
                 "summary": "Delete Comment Post",
-                "operationId": "06378d166c7272feda28dc12ed7c9d5e",
+                "operationId": "3819c3bb6276e6f3743095355af18523",
                 "parameters": [
                     {
                         "name": "post_id",
