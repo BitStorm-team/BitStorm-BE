@@ -22,7 +22,6 @@ class LoginControllerTest extends TestCase
             'password' => 'admin@gmail.com',
         ]);
 
-
         // Mock the Validator
         Validator::shouldReceive('make')
             ->once()
@@ -37,7 +36,6 @@ class LoginControllerTest extends TestCase
                 'password' => 'admin@gmail.com',
             ]);
 
-
         // Mock the Auth attempt method to return a JWT token
         Auth::shouldReceive('attempt')
             ->once()
@@ -46,7 +44,6 @@ class LoginControllerTest extends TestCase
                 'password' => 'admin@gmail.com',
             ])
             ->andReturn('some-jwt-token');
-
 
         // Mock the auth()->user() and auth()->factory()->getTTL() calls
         $user = (object) ['id' => 1, 'email' => 'admin@gmail.com'];
@@ -57,26 +54,21 @@ class LoginControllerTest extends TestCase
         Auth::shouldReceive('getTTL')
             ->andReturn(60);
 
-
         // Call the login method
         $controller = new AuthController();
         $response = $controller->login($request);
 
-
         // Assert the response status
         $this->assertEquals(200, $response->status());
 
-
         // Decode the JSON response
         $responseData = json_decode($response->getContent(), true);
-
 
         // Assert the JSON response structure and values
         $this->assertArrayHasKey('access_token', $responseData);
         $this->assertArrayHasKey('token_type', $responseData);
         $this->assertArrayHasKey('expires_in', $responseData);
         $this->assertArrayHasKey('user', $responseData);
-
 
         $this->assertEquals('some-jwt-token', $responseData['access_token']);
         $this->assertEquals('bearer', $responseData['token_type']);
@@ -85,7 +77,6 @@ class LoginControllerTest extends TestCase
         $this->assertEquals('admin@gmail.com', $responseData['user']['email']);
     }
 
-
     public function testLoginValidationFails()
     {
         // Create a mock request
@@ -93,7 +84,6 @@ class LoginControllerTest extends TestCase
             'email' => 'admin@gmail.com',
             'password' => '',
         ]);
-
 
         // Mock the Validator
         Validator::shouldReceive('make')
@@ -106,19 +96,15 @@ class LoginControllerTest extends TestCase
             ->once()
             ->andReturn(['password' => ['The password field is required.']]);
 
-
         // Call the login method
         $controller = new AuthController();
         $response = $controller->login($request);
 
-
         // Assert the response status
         $this->assertEquals(422, $response->status());
 
-
         // Decode the JSON response
         $responseData = json_decode($response->getContent(), true);
-
 
         // Assert the JSON response structure and values
         $this->assertArrayHasKey('password', $responseData);
@@ -134,7 +120,6 @@ class LoginControllerTest extends TestCase
             'password' => 'wrongpassword',
         ]);
 
-
         // Mock the Validator
         Validator::shouldReceive('make')
             ->once()
@@ -149,7 +134,6 @@ class LoginControllerTest extends TestCase
                 'password' => 'wrongpassword',
             ]);
 
-
         // Mock the Auth attempt method to return false
         Auth::shouldReceive('attempt')
             ->once()
@@ -159,19 +143,15 @@ class LoginControllerTest extends TestCase
             ])
             ->andReturn(false);
 
-
         // Call the login method
         $controller = new AuthController();
         $response = $controller->login($request);
 
-
         // Assert the response status
         $this->assertEquals(401, $response->status());
 
-
         // Decode the JSON response
         $responseData = json_decode($response->getContent(), true);
-
 
         // Assert the JSON response structure and values
         $this->assertArrayHasKey('error', $responseData);
@@ -207,14 +187,11 @@ class LoginControllerTest extends TestCase
         $controller = new AuthController();
         $response = $controller->login($request);
 
-
         // Assert the response status
         $this->assertEquals(422, $response->status());
 
-
         // Decode the JSON response
         $responseData = json_decode($response->getContent(), true);
-
 
         // Assert the JSON response structure and values
         $this->assertArrayHasKey('email', $responseData);
