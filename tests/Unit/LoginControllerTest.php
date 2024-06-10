@@ -1,6 +1,8 @@
 <?php
 
+
 namespace Tests\Unit;
+
 
 use Tests\TestCase;
 use Illuminate\Http\Request;
@@ -8,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\AuthController;
 use Mockery;
+
 
 class LoginControllerTest extends TestCase
 {
@@ -108,6 +111,7 @@ class LoginControllerTest extends TestCase
         $this->assertEquals(['The password field is required.'], $responseData['password']);
     }
 
+
     public function testLoginUnauthorized()
     {
         // Create a mock request
@@ -152,5 +156,47 @@ class LoginControllerTest extends TestCase
         // Assert the JSON response structure and values
         $this->assertArrayHasKey('error', $responseData);
         $this->assertEquals('Unauthorized', $responseData['error']);
+    }
+
+
+    public function testLoginEmptyRequest()
+    {
+        // Create a mock request with empty values
+        $request = Request::create('/api/auth/login', 'POST', [
+            'email' => '',
+            'password' => '',
+        ]);
+
+
+        // Mock the Validator
+        Validator::shouldReceive('make')
+            ->once()
+            ->andReturnSelf();
+        Validator::shouldReceive('fails')
+            ->once()
+            ->andReturn(true);
+        Validator::shouldReceive('errors')
+            ->once()
+            ->andReturn([
+                'email' => ['The email field is required.'],
+                'password' => ['The password field is required.'],
+            ]);
+
+
+        // Call the login method
+        $controller = new AuthController();
+        $response = $controller->login($request);
+
+        // Assert the response status
+        $this->assertEquals(422, $response->status());
+
+        // Decode the JSON response
+        $responseData = json_decode($response->getContent(), true);
+
+        // Assert the JSON response structure and values
+        $this->assertArrayHasKey('email', $responseData);
+        $this->assertArrayHasKey('password', $responseData);
+        $this->assertEquals(['The email field is required.'], $responseData['email']);
+        $this->assertEquals(['The password field is required.'], $responseData['password']);
     }
 }
