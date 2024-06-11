@@ -269,6 +269,7 @@ class ExpertDetailController extends Controller
         $expert->phone_number = $request->input('phone_number');
         $expert->gender = $request->input('gender');
         $expert->date_of_birth = $request->input('date_of_birth');
+        $expert-> profile_picture = $request->input('profile_picture');
         $expert->status = 1;
         $expert->save();
 
