@@ -80,7 +80,7 @@ class ExpertDetailController extends Controller
         // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
         $user = $expertDetail->user;
         // Step 3: Get all calendars that are booked and available in the present and future
-        $currentDateTime = date("Y-m-d H:i:s");
+        $currentDateTime = date("H:i:s");
         $calendars = Calendar::where('expert_id', $id)
             ->where('start_time', '>=', $currentDateTime)
             ->get();
