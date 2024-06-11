@@ -269,6 +269,7 @@ class ExpertDetailController extends Controller
         $expert->phone_number = $request->input('phone_number');
         $expert->gender = $request->input('gender');
         $expert->date_of_birth = $request->input('date_of_birth');
+        $expert-> profile_picture = $request->input('profile_picture');
         $expert->status = 1;
         $expert->save();
 
@@ -327,9 +328,17 @@ class ExpertDetailController extends Controller
     {
         // Get all query parameters for filtering
         $query = Calendar::query();
-        $price = $request->input('price');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+
         // Execute the query and get the results
-        $calendar = $query->where("price",$price)->with('expertDetail')->get();
+        $calendar = DB::table('bookings')
+            ->join('calendars', 'calendars.id', '=', 'bookings.calendar_id')
+            ->join('users', 'users.id', '=', 'bookings.user_id')
+            // ->join('expert_details', 'expert_details.user_id', '=', 'users.id')
+            ->select('calendars.*','users.*')
+            ->whereBetween('calendars.price', [$minPrice, $maxPrice])
+            ->get();
         // Return the filtered results
         return response()->json([
             'success' => true,

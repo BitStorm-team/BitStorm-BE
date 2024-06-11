@@ -289,6 +289,7 @@ class UserController extends Controller
         $user->address = $request->input('address ');
         $user->phone_number = $request->input('phone_number');
         $user->gender = $request->input('gender');
+        $user-> profile_picture = $request->input('profile_picture');
         $user->status = 1;
         $user->save();
         return response()->json([
