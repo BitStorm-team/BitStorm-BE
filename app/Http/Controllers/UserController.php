@@ -242,16 +242,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|email',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[A-Z]/', // Ít nhất một chữ cái viết hoa
-                'regex:/[a-z]/', // Ít nhất một chữ cái viết thường
-                'regex:/[0-9]/', // Ít nhất một ký tự số
-                'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // Ít nhất một ký tự đặc biệt
-            ],
-            'profile_picture' => 'string',
+            'profile_picture' => 'string|url',
             'phone_number' => [
                 'numeric',
                 'digits:10', // Đảm bảo số điện thoại có 10 chữ số
@@ -285,7 +276,6 @@ class UserController extends Controller
 
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        $user->password = $request->input('password');
         $user->address = $request->input('address ');
         $user->phone_number = $request->input('phone_number');
         $user->gender = $request->input('gender');
