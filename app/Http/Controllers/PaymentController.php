@@ -10,7 +10,11 @@ class PaymentController extends Controller
     {
         $data = $request->all();
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://localhost:3000/";
+         // Determine the return URL based on the environment
+         $vnp_Returnurl = env('APP_ENV') === 'production'
+         ? env('PRODUCTION_RETURN_URL')
+         : env('FRONTEND_URL');
+         
         $vnp_TmnCode = "V1O3H94J"; //Mã website tại VNPAY
         $vnp_HashSecret = "ORWNNIISEYIOYFPCVQGSPKGCIACSEPPP"; //Chuỗi bí mật
 

@@ -195,6 +195,8 @@ class BookingController extends Controller
         }
         return $googleMeetLink;
     }
+
+    // get list user's booking
     public function getAllBookingsByExpertId(Request $request, $expertId)
     {
         $user = $this->getUser($request);
