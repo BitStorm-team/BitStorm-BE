@@ -291,27 +291,35 @@ class ExpertDetailController extends Controller
     public function search(Request $request)
     {
         $searchTerm = $request->input('searchTerm');
-
+        
         if ($searchTerm) {
-            $experts = User::where('name', 'like', "%$searchTerm%")
-                ->orWhere('email', 'like', "%$searchTerm%")
+            $experts = User::where('role_id', 3)
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', "%$searchTerm%")
+                          ->orWhere('email', 'like', "%$searchTerm%");
+                })
                 ->with('expert')
-                ->where('role_id',3)
                 ->get();
+        
             if ($experts->isEmpty()) {
-                $experts = ExpertDetail::where('experience', 'like', "%$searchTerm%")->with('user')->get();
+                $experts = ExpertDetail::where('experience', 'like', "%$searchTerm%")
+                    ->whereHas('user', function ($query) {
+                        $query->where('role_id', 3);
+                    })
+                    ->with('user')
+                    ->get();
             }
         } else {
-            // Trả về 1 nếu không có từ khóa tìm kiếm
             return response()->json(['message' => 'No search term provided'], 400);
         }
-
+    
         return response()->json([
             'success' => true,
-            'message' => 'Expert updated successfully',
-            'data' => $experts,
+            'message' => 'Experts retrieved successfully',
+            'data' => $experts
         ], 200);
     }
+    
 
     // filter
     public function filter(Request $request)
