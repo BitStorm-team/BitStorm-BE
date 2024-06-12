@@ -157,7 +157,9 @@ Route::post('/contactUs', [ContactController::class, 'contactUs']);
 //VN pay
 Route::post('/payment', [PaymentController::class, 'makePayment']);
 
-
+//notification
+// getAllPostsByUserId
+Route::get('/profile/notifications',[PostController::class, 'getAllPostsByUserId']);
 // auth api
 require __DIR__ . '/auth.php';
 
