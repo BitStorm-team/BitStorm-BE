@@ -7,6 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+use function PHPUnit\Framework\isEmpty;
+
 class PostController extends Controller
 {
     /**
@@ -63,7 +65,7 @@ class PostController extends Controller
     {
         // Validate incoming request
         $validated = $request->validate([
-            'user_id'=>'required',
+            'user_id' => 'required',
             'content' => 'required|string',
             'is_anonymous' => 'required|boolean',
         ]);
@@ -92,7 +94,7 @@ class PostController extends Controller
         $post = Post::with([
             'user',
             'comments' => function ($query) {
-                $query->whereNull('parent_id')->with('replies','user');
+                $query->whereNull('parent_id')->with('replies', 'user');
             }
         ])->findOrFail($postId);
         if (empty($post)) {
@@ -137,33 +139,34 @@ class PostController extends Controller
             'data' => $post,
         ], 200);
     }
-    public function updatePostContent(Request $request,$id=0){
+    public function updatePostContent(Request $request, $id = 0)
+    {
         $user = $this->getUser($request);
         $userId = $user->id;
         $post = Post::where('id', $id)->where('user_id', $userId)->first();
-        if(empty($post)){
+        if (empty($post)) {
             return response()->json([
                 'success' => false,
                 'message' => 'user not match',
             ], 404);
         }
-         // Validate incoming request
+        // Validate incoming request
         $request->validate([
-        'content' => 'required|string',
-        'is_anonymous' => 'required|boolean',
-            ]);
-        $data=[
+            'content' => 'required|string',
+            'is_anonymous' => 'required|boolean',
+        ]);
+        $data = [
             'content' => $request['content'],
-            'is_anonymous'=>$request->is_anonymous,
+            'is_anonymous' => $request->is_anonymous,
         ];
 
-            $post->update($data);
+        $post->update($data);
 
-            return response()->json([
-                'success'=>true,
-                'message' => 'Update post successfully',
-                'post' => $post
-            ], 200);
+        return response()->json([
+            'success' => true,
+            'message' => 'Update post successfully',
+            'post' => $post
+        ], 200);
     }
     /**
      * Remove the specified resource from storage.
@@ -172,29 +175,29 @@ class PostController extends Controller
      * @return Response
      */
     public function destroy($id)
-        {
-            $post = Post::with('comments', 'comments.replies')->find($id);
-            if (empty($post)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'PostID not found',
-                    'data' => null,
-                ], 404);
-            }
-            $post->comments()->delete();
-            $post->delete();
-
+    {
+        $post = Post::with('comments', 'comments.replies')->find($id);
+        if (empty($post)) {
             return response()->json([
-                'success' => true,
-                'message' => 'Post and its comments deleted successfully!',
-            ], 200);
+                'success' => false,
+                'message' => 'PostID not found',
+                'data' => null,
+            ], 404);
         }
+        $post->comments()->delete();
+        $post->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post and its comments deleted successfully!',
+        ], 200);
+    }
     public function deletePost(Request $request, $id)
     {
         $user = $this->getUser($request);
         $userId = $user->id;
-        $post = Post::where('id', $id)->where('user_id',$userId)->with('comments', 'comments.replies')->first();
-        if(empty($post)){
+        $post = Post::where('id', $id)->where('user_id', $userId)->with('comments', 'comments.replies')->first();
+        if (empty($post)) {
             return response()->json([
                 'success' => false,
                 'message' => 'invalid user',
@@ -208,4 +211,37 @@ class PostController extends Controller
             'message' => 'Post and its comments deleted successfully!',
         ], 200);
     }
+    public function getAllPostsByUserId(Request $request)
+    {
+        $user = $this->getUser($request);
+        if (!empty($user)) {
+            $userId = $user->id;
+            $posts = Post::with([
+                'user',
+                'comments' => function ($query) {
+                    $query->whereNull('parent_id');
+                },
+                'comments.user'
+            ])->where('user_id', $userId)
+                ->get();
+            if ($posts->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No posts found for today',
+                    'data' => null,
+                ], 404);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Show all posts successfully!',
+                'data' => $posts,
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login',
+            ], 401);
+        }
+    }
+
 }
