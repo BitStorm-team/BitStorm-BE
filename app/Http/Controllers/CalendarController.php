@@ -98,6 +98,7 @@ class CalendarController extends Controller
                 $calendar->end_time = $request->end_time;
                 $calendar->price = $request->price;
                 $calendar->describe = $request->describe;
+                $calendar->status = 1;
                 $calendar->save();
 
                 return response()->json([

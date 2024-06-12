@@ -80,7 +80,7 @@ class ExpertDetailController extends Controller
         // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
         $user = $expertDetail->user;
         // Step 3: Get all calendars that are booked and available in the present and future
-        $currentDateTime = date("Y-m-d H:i:s");
+        $currentDateTime = date("H:i:s");
         $calendars = Calendar::where('expert_id', $id)
             ->where('start_time', '>=', $currentDateTime)
             ->get();
@@ -217,16 +217,7 @@ class ExpertDetailController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|email',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'regex:/[A-Z]/', // At least one uppercase letter
-                'regex:/[a-z]/', // At least one lowercase letter
-                'regex:/[0-9]/', // At least one digit
-                'regex:/[!@#$%^&*()\-_=+{};:,<.>]/', // At least one special character
-            ],
-            'profile_picture' => 'string',
+            'profile_picture' => 'string|url',
             'date_of_birth' => 'date',
             'phone_number' => [
                 'numeric',
@@ -235,7 +226,7 @@ class ExpertDetailController extends Controller
             ],
             'gender' => 'string',
             'experience' => 'string',
-            'certificate' => 'string'
+            'certificate' => 'string|url'
         ]);
 
         if (empty($expertID)) {
@@ -264,11 +255,11 @@ class ExpertDetailController extends Controller
         // Update expert information
         $expert->name = $request->input('name');
         $expert->email = $request->input('email');
-        $expert->password = $request->input('password');
         $expert->address = $request->input('address'); // Make sure to set the address
         $expert->phone_number = $request->input('phone_number');
         $expert->gender = $request->input('gender');
         $expert->date_of_birth = $request->input('date_of_birth');
+        $expert-> profile_picture = $request->input('profile_picture');
         $expert->status = 1;
         $expert->save();
 
@@ -327,9 +318,17 @@ class ExpertDetailController extends Controller
     {
         // Get all query parameters for filtering
         $query = Calendar::query();
-        $price = $request->input('price');
+        $minPrice = $request->input('min_price');
+        $maxPrice = $request->input('max_price');
+
         // Execute the query and get the results
-        $calendar = $query->where("price",$price)->with('expertDetail')->get();
+        $calendar = DB::table('bookings')
+            ->join('calendars', 'calendars.id', '=', 'bookings.calendar_id')
+            ->join('users', 'users.id', '=', 'bookings.user_id')
+            // ->join('expert_details', 'expert_details.user_id', '=', 'users.id')
+            ->select('calendars.*','users.*')
+            ->whereBetween('calendars.price', [$minPrice, $maxPrice])
+            ->get();
         // Return the filtered results
         return response()->json([
             'success' => true,

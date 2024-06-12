@@ -69,23 +69,24 @@ class AuthController extends Controller
      **/
 
 
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email', // Thêm kiểm tra duy nhất cho email
-            'password' => 'required',
-        ]);
+     public function login(Request $request)
+     {
+         $validator = Validator::make($request->all(), [
+             'email' => 'required|email',
+             'password' => 'required',
+         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+         if ($validator->fails()) {
+             return response()->json($validator->errors(), 422);
+         }
 
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+         if (!$token = auth()->attempt($validator->validated())) {
+             return response()->json(['error' => 'Unauthorized'], 401);
+         }
 
-        return $this->createNewToken($token);
-    }
+         return $this->createNewToken($token);
+     }
+
 
 
     /**

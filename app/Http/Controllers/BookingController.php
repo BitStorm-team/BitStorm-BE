@@ -43,7 +43,7 @@ class BookingController extends Controller
 
     public function getAllBookings()
     {
-        $bookings = Booking::with('user', 'calendar.expertDetail.user')->paginate(10);
+        $bookings = Booking::with('user', 'calendar.expertDetail.user');
         if (!empty($bookings)) {
             return response()->json([
                 'success' => true,
@@ -195,36 +195,33 @@ class BookingController extends Controller
         }
         return $googleMeetLink;
     }
+
+    // get list user's booking
     public function getAllBookingsByExpertId(Request $request, $expertId)
     {
         $user = $this->getUser($request);
 
         // Kiểm tra quyền truy cập
-        if ($user->id !== $expertId && $user->role_id !== 3) {
+        if ($user->role_id !== 3) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to access bookings of this expert',
             ], 403);
         }
 
-        $bookings = Booking::with(['user', 'calendar.expertDetail.user'])
+        $bookings = Booking::with('user', 'calendar.expertDetail.user')
             ->whereHas('calendar', function ($query) use ($expertId) {
                 $query->where('expert_id', $expertId);
-            })
-            ->paginate(10);
-
-        if ($bookings->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No bookings found for the specified expert ID',
-            ], 404);
-        }
+            })->get();
 
         return response()->json([
             'success' => true,
-            'data' => $bookings,
+            'data' => [
+                'data' => $bookings
+            ],
         ], 200);
     }
+
     public function getBookingByExpertIdAndBookingId(Request $request, $expertId, $bookingId)
     {
         $user = $this->getUser($request);
@@ -253,12 +250,12 @@ class BookingController extends Controller
             'data' => $booking,
         ], 200);
     }
-    public function getAllBookingsByUserId(Request $request, $userId)
+    public function getAllBookingsByUserId(Request $request)
     {
         $user = $this->getUser($request);
 
         // Kiểm tra quyền truy cập
-        if ($user->id !== $userId && $user->role_id !== 3) {
+        if ($user->role_id === 3) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to access bookings of this user',
@@ -266,15 +263,8 @@ class BookingController extends Controller
         }
 
         $bookings = Booking::with(['user', 'calendar.expertDetail.user'])
-            ->where('user_id', $userId)
+            ->where('user_id', $user->id)
             ->paginate(10);
-
-        if ($bookings->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No bookings found for the specified user ID',
-            ], 404);
-        }
 
         return response()->json([
             'success' => true,
