@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -318,7 +319,7 @@ class UserController extends Controller
     {
         // Lấy dữ liệu thống kê số lượng người dùng theo tháng dựa trên created_at
         $userStats = User::select(
-            DB::raw('DATE_FORMAT(created_at, "%Y-%m") as month'),
+            DB::raw('SUBSTRING(DATE_FORMAT(created_at, "%M"), 1, 3) as month'),
             DB::raw('COUNT(*) as count')
         )
             ->groupBy('month')
@@ -332,4 +333,34 @@ class UserController extends Controller
             'data' => $userStats,
         ], 200);
     }
+
+    //
+    public function getMonthlyBookingStats()
+    {
+        // Lấy dữ liệu thống kê số lượng người dùng theo tháng dựa trên created_at
+        $userStats = Booking::select(
+            DB::raw('SUBSTRING(DATE_FORMAT(created_at, "%M"), 1, 3) as month'),
+            DB::raw('COUNT(*) as count'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        // Trả về dữ liệu thống kê
+        return response()->json([
+            'success' => true,
+            'message' => 'User statistics fetched successfully',
+            'data' => $userStats,
+        ], 200);
+    }
+
+    public function getAllCalendar(){
+        $calendars = DB::table('calendars')->get();
+         // Trả về dữ liệu thống kê
+         return response()->json([
+            'success' => true,
+            'message' => 'User statistics fetched successfully',
+            'data' => $calendars,
+        ], 200);
+    }
+
 }

@@ -87,6 +87,10 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
 
     // thống kê số lượng users
     Route::get('/stats', [UserController::class, 'userStatsByCreatedAt'])->name('stats');
+    Route::get('/bookings-stats', [UserController::class, 'getMonthlyBookingStats'])->name('stats-booking');
+    Route::get('/allCalendars', [UserController::class, 'getAllCalendar'])->name('allCalendars');
+
+
 
 });
 
