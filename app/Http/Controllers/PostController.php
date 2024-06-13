@@ -21,9 +21,8 @@ class PostController extends Controller
         $posts = Post::with([
             'user',
             'comments' => function ($query) {
-                $query->whereNull('parent_id');
+                $query->whereNull('parent_id')->with('replies.user','user');
             },
-            'comments.user'
         ])->get();
         return response()->json([
             'success' => true,
@@ -76,10 +75,10 @@ class PostController extends Controller
         ];
 
         $post = Post::create($data);
-
+        
         return response()->json([
             'success' => true,
-            'message' => 'Create post successfullyy',
+            'message' => 'Create post successfully',
             'post' => $post
         ], 201);
     }
@@ -89,15 +88,15 @@ class PostController extends Controller
      * @param $postId
      * @return JsonResponse
      */
-    public function show($postId): JsonResponse
+    public function getOnePost($postId): JsonResponse
     {
         $post = Post::with([
             'user',
             'comments' => function ($query) {
-                $query->whereNull('parent_id')->with('replies', 'user');
+                $query->whereNull('parent_id')->with('replies.user','user');
             }
         ])->findOrFail($postId);
-        if (empty($post)) {
+        if (!$post) {
             return response()->json([
                 'success' => false,
                 'message' => 'PostID not found',

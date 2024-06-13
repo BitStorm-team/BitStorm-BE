@@ -101,10 +101,16 @@ class CommentController extends Controller
                 'parent_id' => $request->parent_id,
             ];
             $comment = Comment::create($data);
+            $comment2 = Comment::with([
+                'user',
+                'replies' => function ($query) {
+                    $query->whereNull('parent_id')->with('replies.user', 'user');
+                },
+            ])->where('id', $comment->id)->first();
             return response()->json([
                 'success' => true,
                 'message' => 'Created comment post successfully!',
-                'data' => $comment,
+                'data' => $comment2,
             ], 201);
         } catch (ValidationException $e) {
             return response()->json([
@@ -198,12 +204,17 @@ class CommentController extends Controller
 
             // Update the comment
             $comment->update($validatedData);
-
+            $comment2 = Comment::with([
+                'user',
+                'replies' => function ($query) {
+                    $query->whereNull('parent_id')->with('replies.user', 'user');
+                },
+            ])->where('id', $comment->id)->first();
             // Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'Comment post updated successfully!',
-                'data' => $comment,
+                'data' => $comment2,
             ], 200);
         } catch (ValidationException $e) {
             // Return validation error response
