@@ -84,12 +84,17 @@ Route::prefix('admin')->middleware('role.admin')->group(function () {
 
     //  Lấy thông tin profile admin
     Route::get('/admin-profile/{id}', [UserController::class, 'showAdminProfile'])->name('admin.profile');
-});
+
+    // thống kê số lượng users
+    Route::get('/stats', [UserController::class, 'userStatsByCreatedAt'])->name('stats');
+    Route::get('/bookings-stats', [UserController::class, 'getMonthlyBookingStats'])->name('stats-booking');
+    Route::get('/allCalendars', [UserController::class, 'getAllCalendar'])->name('allCalendars');
+})->middleware('activeAccount');
 
 // feedbacks
-Route::get('/feedbacks', [FeedbackController::class, 'getAllFeedbacks']);
+Route::get('/feedbacks', [FeedbackController::class, 'getAllFeedbacks'])->middleware('activeAccount');
 //  create a new feedback
-Route::post('/feedbacks/create', [FeedbackController::class, 'createFeedbackExpert']);
+Route::post('/feedbacks/create', [FeedbackController::class, 'createFeedbackExpert'])->middleware('activeAccount');
 
 // user routes
 Route::prefix('user')->group(function () {
@@ -99,7 +104,7 @@ Route::prefix('user')->group(function () {
     //booking
     Route::get('/{userId}/bookings', [BookingController::class, 'getAllBookingsByUserId']);
     Route::get('/{userId}/bookings/{bookingId}', [BookingController::class, 'getBookingByUserIdAndBookingId']);
-});
+})->middleware('activeAccount');
 
 // expert routes
 Route::prefix('experts')->group(function () {
@@ -122,7 +127,7 @@ Route::prefix('experts')->group(function () {
     //boooking
     Route::get('/{expertId}/bookings', [BookingController::class, 'getAllBookingsByExpertId']);
     Route::get('/{expertId}/bookings/{bookingId}', [BookingController::class, 'getBookingByExpertIdAndBookingId']);
-});
+})->middleware('activeAccount');
 
 // post
 Route::prefix('posts')->group(function () {
@@ -140,16 +145,18 @@ Route::prefix('posts')->group(function () {
     Route::post('/{postId}/comments/update/{commentId}', [CommentController::class, 'update']);
     // delete comment
     Route::delete('/{postId}/comments/delete/{commentId}', [CommentController::class, 'destroy']);
-});
+})->middleware('activeAccount');
 
 //contact us
 // create new contact
-Route::post('/contactUs', [ContactController::class, 'contactUs']);
+Route::post('/contactUs', [ContactController::class, 'contactUs'])->middleware('activeAccount');
 
 //VN pay
-Route::post('/payment', [PaymentController::class, 'makePayment']);
+Route::post('/payment', [PaymentController::class, 'makePayment'])->middleware('activeAccount');
 
-
+//notification
+// getAllPostsByUserId
+Route::get('/profile/notifications',[PostController::class, 'getAllPostsByUserId'])->middleware('activeAccount');
 // auth api
 require __DIR__ . '/auth.php';
 

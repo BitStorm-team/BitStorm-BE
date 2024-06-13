@@ -43,7 +43,7 @@ class BookingController extends Controller
 
     public function getAllBookings()
     {
-        $bookings = Booking::with('user', 'calendar.expertDetail.user');
+        $bookings = Booking::with('user', 'calendar.expertDetail.user')->get();
         if (!empty($bookings)) {
             return response()->json([
                 'success' => true,
