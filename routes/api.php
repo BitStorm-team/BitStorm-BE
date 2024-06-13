@@ -139,6 +139,7 @@ Route::prefix('posts')->group(function () {
     Route::get('/{postId}', [PostController::class, 'show']);
     Route::get('/', [PostController::class, 'index']);
     // comment of the post
+    Route::get('/{postId}/comments/', [PostController::class, 'getOnePost']);
     // create a new comment
     Route::post('/{postId}/comments/create', [CommentController::class, 'store']);
     // update comment
