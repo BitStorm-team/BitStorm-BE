@@ -132,7 +132,8 @@ Route::prefix('experts')->group(function () {
 
 // post
 Route::prefix('posts')->group(function () {
-    // post
+    // Likepost
+    Route::get('/{postId}/is-liked', [LikePostController::class, 'isLiked']);
     Route::post('/{postId}/like', [LikePostController::class, 'like']);
     Route::delete('/{postId}/unlike', [LikePostController::class, 'unlike']);
     // create a new post

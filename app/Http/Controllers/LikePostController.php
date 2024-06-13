@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class LikePostController extends Controller
 {
+    public function isLiked(Request $request, $postId)
+    {
+        $user = $this->getUser($request);
+        $isLiked = LikePost::where('user_id', $user->id)->where('post_id', $postId)->exists();
+
+        return response()->json(['isLiked' => $isLiked], 200);
+    }
     public function like(Request $request,$postId)
     {
         $user = $this->getUser($request);
