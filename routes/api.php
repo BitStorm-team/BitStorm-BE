@@ -1,18 +1,19 @@
 <?php
 
+use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ExpertDetailController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\FeedbackController;
-use App\Models\Feedback;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\LikePostController;
+use App\Http\Controllers\ExpertDetailController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +133,8 @@ Route::prefix('experts')->group(function () {
 // post
 Route::prefix('posts')->group(function () {
     // post
+    Route::post('/{postId}/like', [LikePostController::class, 'like']);
+    Route::delete('/{postId}/unlike', [LikePostController::class, 'unlike']);
     // create a new post
     Route::post('/create', [PostController::class, 'store']);
     Route::put('/update/{id}',[PostController::class,'updatePostContent']);
