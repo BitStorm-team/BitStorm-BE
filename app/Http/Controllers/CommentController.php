@@ -281,26 +281,32 @@ class CommentController extends Controller
 
     public function createPostByAdmin(Request $request)
     {
-        //  lấy user hiện tại
+        // Get the current user
         $user = $this->getUser($request);
 
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'post_id' => 'required',
             'content' => 'required',
-            'status' => 'required',
+            'status' => 'required|integer', // Ensure status is an integer
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
+        // Create the comment data array
         $data = [
             'post_id' => $request->post_id,
             'user_id' => $request->user_id,
-            'content' => $validator['content'],
-            'status' =>  $request->status, // Validate status as an integer
+            'content' => $request->content,
+            'status' => $request->status,
         ];
+
+        // Create the comment post
         $commentsPost = Comment::create($data);
+
         return response()->json([
             'success' => true,
             'message' => 'Created comment post successfully!',
