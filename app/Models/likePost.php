@@ -14,7 +14,26 @@ class LikePost extends Model
         'user_id',
         'post_id',
     ];
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::created(function (LikePost $likePost) {
+            $post = Post::find($likePost->post_id);
+            if ($post) {
+                $post->like_count++;
+                $post->save();
+            }
+        });
+
+        static::deleted(function (LikePost $likePost) {
+            $post = Post::find($likePost->post_id);
+            if ($post) {
+                $post->like_count--;
+                $post->save();
+            }
+        });
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

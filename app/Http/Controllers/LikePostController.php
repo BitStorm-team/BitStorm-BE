@@ -11,11 +11,11 @@ class LikePostController extends Controller
     public function like(Request $request,$postId)
     {
         $user = $this->getUser($request);
-        $likePost = LikePost::firstOrCreate([
+        $data = [
             'user_id' => $user->id,
             'post_id' => $postId,
-        ]);
-
+        ];
+        $likePost = LikePost::create($data);
         return response()->json([ 'success' => true,'message' => 'Post liked successfully', 'data' => $likePost], 200);
     }
 
