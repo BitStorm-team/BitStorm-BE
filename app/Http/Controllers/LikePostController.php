@@ -11,7 +11,6 @@ class LikePostController extends Controller
 
     public function getLikedPosts(Request $request)
     {
-        try {
             $user = $this->getUser($request);
 
             if (!$user) {
@@ -21,9 +20,7 @@ class LikePostController extends Controller
             $isLiked = LikePost::where('user_id', $user->id)->get();
 
             return response()->json(['data' => $isLiked], 200);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+       
     }
 
     public function like(Request $request, $postId)
