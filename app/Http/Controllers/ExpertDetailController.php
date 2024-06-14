@@ -70,7 +70,7 @@ class ExpertDetailController extends Controller
     public function getExpertDetail($id)
     {
         // Bước 1: Lấy chi tiết của chuyên gia dựa trên id
-        $expertDetail = ExpertDetail::where('user_id', $id)->with("calendars")->first();
+        $expertDetail = ExpertDetail::where('user_id', $id)->with('user')->first();
         if (!$expertDetail) {
             return response()->json([
                 'success' => false,
