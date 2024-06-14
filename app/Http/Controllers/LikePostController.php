@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class LikePostController extends Controller
 {
 
-    public function isLiked(Request $request, $postId)
+    public function getLikedPosts(Request $request)
     {
         try {
             $user = $this->getUser($request);
@@ -18,9 +18,9 @@ class LikePostController extends Controller
                 return response()->json(['error' => 'User not authenticated'], 401);
             }
 
-            $isLiked = LikePost::where('user_id', $user->id)->where('post_id', $postId)->exists();
+            $isLiked = LikePost::where('user_id', $user->id)->get();
 
-            return response()->json(['isLiked' => $isLiked], 200);
+            return response()->json(['data' => $isLiked], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -35,7 +35,6 @@ class LikePostController extends Controller
                 'post_id' => $postId,
             ];
 
-            // Kiểm tra nếu người dùng đã like bài viết này
             if (LikePost::where($data)->exists()) {
                 return response()->json(['success' => false, 'message' => 'You have already liked this post'], 400);
             }
