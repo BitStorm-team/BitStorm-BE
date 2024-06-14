@@ -80,7 +80,7 @@ class ExpertDetailController extends Controller
         // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
         $user = $expertDetail->user;
         // Step 3: Get all calendars that are booked and available in the present and future
-        $currentDateTime = date("H:i:s");
+        $currentDateTime = date("Y-d-m H:i:s");
         $calendars = Calendar::where('expert_id', $id)
             ->where('start_time', '>=', $currentDateTime)
             ->get();
@@ -291,7 +291,7 @@ class ExpertDetailController extends Controller
     public function search(Request $request)
     {
         $searchTerm = $request->input('searchTerm');
-        
+
         if ($searchTerm) {
             $experts = User::where('role_id', 3)
                 ->where(function ($query) use ($searchTerm) {
@@ -300,7 +300,7 @@ class ExpertDetailController extends Controller
                 })
                 ->with('expert')
                 ->get();
-        
+
             if ($experts->isEmpty()) {
                 $experts = ExpertDetail::where('experience', 'like', "%$searchTerm%")
                     ->whereHas('user', function ($query) {
@@ -312,14 +312,14 @@ class ExpertDetailController extends Controller
         } else {
             return response()->json(['message' => 'No search term provided'], 400);
         }
-    
+
         return response()->json([
             'success' => true,
             'message' => 'Experts retrieved successfully',
             'data' => $experts
         ], 200);
     }
-    
+
 
     // filter
     public function filter(Request $request)
@@ -342,5 +342,10 @@ class ExpertDetailController extends Controller
             'success' => true,
             'data' => $calendar,
         ]);
+    }
+    function getOwnCalendars(Request $request, $id)
+    {
+        return "hello";
+
     }
 }

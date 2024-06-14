@@ -182,8 +182,7 @@ class CommentController extends Controller
         try {
             // Validate request data
             $validatedData = $request->validate([
-                'content' => 'required|string',
-                'status' => 'required|integer', // Validate status as an integer
+                'content' => 'required|string', // Validate status as an integer
             ]);
 
             // Authenticate user
