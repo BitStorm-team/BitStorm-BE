@@ -81,9 +81,9 @@ class ExpertDetailController extends Controller
         $user = $expertDetail->user;
         // Step 3: Get all calendars that are booked and available in the present and future
         $currentDateTime = date("Y-d-m H:i:s");
-        $calendars = Calendar::where('expert_id', $id)
+        $calendars = Calendar::with(['expertDetail', 'expertDetail.user'])
             ->where('start_time', '>=', $currentDateTime)
-            ->get();
+            ->where('expert_id', $id)->get();
 
         $feedback = DB::table('bookings')
             ->join('users', 'users.id', '=', 'bookings.user_id')
@@ -259,7 +259,7 @@ class ExpertDetailController extends Controller
         $expert->phone_number = $request->input('phone_number');
         $expert->gender = $request->input('gender');
         $expert->date_of_birth = $request->input('date_of_birth');
-        $expert-> profile_picture = $request->input('profile_picture');
+        $expert->profile_picture = $request->input('profile_picture');
         $expert->status = 1;
         $expert->save();
 
@@ -296,7 +296,7 @@ class ExpertDetailController extends Controller
             $experts = User::where('role_id', 3)
                 ->where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%$searchTerm%")
-                          ->orWhere('email', 'like', "%$searchTerm%");
+                        ->orWhere('email', 'like', "%$searchTerm%");
                 })
                 ->with('expert')
                 ->get();
@@ -334,7 +334,7 @@ class ExpertDetailController extends Controller
             ->join('calendars', 'calendars.id', '=', 'bookings.calendar_id')
             ->join('users', 'users.id', '=', 'bookings.user_id')
             // ->join('expert_details', 'expert_details.user_id', '=', 'users.id')
-            ->select('calendars.*','users.*')
+            ->select('calendars.*', 'users.*')
             ->whereBetween('calendars.price', [$minPrice, $maxPrice])
             ->get();
         // Return the filtered results
@@ -346,6 +346,5 @@ class ExpertDetailController extends Controller
     function getOwnCalendars(Request $request, $id)
     {
         return "hello";
-
     }
 }
