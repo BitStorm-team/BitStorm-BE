@@ -191,25 +191,41 @@ class PostController extends Controller
             'message' => 'Post and its comments deleted successfully!',
         ], 200);
     }
-    public function deletePost(Request $request, $id)
-    {
-        $user = $this->getUser($request);
-        $userId = $user->id;
-        $post = Post::where('id', $id)->where('user_id', $userId)->with('comments', 'comments.replies')->first();
-        if (empty($post)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'invalid user',
-            ], 404);
-        }
-        $post->comments()->delete();
-        $post->delete();
 
+    public function deletePost(Request $request, $id)
+{
+    // Get the authenticated user
+    $user = $this->getUser($request);
+    if (!$user) {
         return response()->json([
-            'success' => true,
-            'message' => 'Post and its comments deleted successfully!',
-        ], 200);
+            'success' => false,
+            'message' => 'User not authenticated',
+        ], 401);
     }
+
+    $userId = $user->id;
+
+    // Retrieve the post with the specified ID and ensure it belongs to the authenticated user
+    $post = Post::where('id', $id)->where('user_id', $userId)->with('comments', 'comments.replies')->first();
+    if (empty($post)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Post not found or does not belong to user',
+        ], 404);
+    }
+
+    // Soft delete the comments and the post
+    foreach ($post->comments as $comment) {
+        $comment->delete();
+    }
+    $post->delete();
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Post and its comments deleted successfully!',
+    ], 200);
+}
+
     public function getAllPostsByUserId(Request $request)
     {
         $user = $this->getUser($request);

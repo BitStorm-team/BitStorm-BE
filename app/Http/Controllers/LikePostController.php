@@ -8,34 +8,60 @@ use Illuminate\Support\Facades\Auth;
 
 class LikePostController extends Controller
 {
+
     public function isLiked(Request $request, $postId)
     {
-        $user = $this->getUser($request);
-        $isLiked = LikePost::where('user_id', $user->id)->where('post_id', $postId)->exists();
+        try {
+            $user = $this->getUser($request);
 
-        return response()->json(['isLiked' => $isLiked], 200);
-    }
-    public function like(Request $request,$postId)
-    {
-        $user = $this->getUser($request);
-        $data = [
-            'user_id' => $user->id,
-            'post_id' => $postId,
-        ];
-        $likePost = LikePost::create($data);
-        return response()->json([ 'success' => true,'message' => 'Post liked successfully', 'data' => $likePost], 200);
-    }
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
 
-    public function unlike(Request $request,$postId)
-    {
-        $user = $this->getUser($request);
-        $likePost = LikePost::where('user_id', $user->id)->where('post_id', $postId)->first();
+            $isLiked = LikePost::where('user_id', $user->id)->where('post_id', $postId)->exists();
 
-        if ($likePost) {
-            $likePost->delete();
-            return response()->json([ 'success' => true,'message' => 'Post unliked successfully'], 200);
+            return response()->json(['isLiked' => $isLiked], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
 
-        return response()->json([ 'success' => false,'message' => 'Like not found'], 404);
+    public function like(Request $request, $postId)
+    {
+        try {
+            $user = $this->getUser($request);
+            $data = [
+                'user_id' => $user->id,
+                'post_id' => $postId,
+            ];
+
+            // Kiểm tra nếu người dùng đã like bài viết này
+            if (LikePost::where($data)->exists()) {
+                return response()->json(['success' => false, 'message' => 'You have already liked this post'], 400);
+            }
+
+            $likePost = LikePost::create($data);
+
+            return response()->json(['success' => true, 'message' => 'Post liked successfully', 'data' => $likePost], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function unlike(Request $request, $postId)
+    {
+        try {
+            $user = $this->getUser($request);
+            $likePost = LikePost::where('user_id', $user->id)->where('post_id', $postId)->first();
+
+            if ($likePost) {
+                $likePost->delete();
+                return response()->json(['success' => true, 'message' => 'Post unliked successfully'], 200);
+            }
+
+            return response()->json(['success' => false, 'message' => 'Like not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
