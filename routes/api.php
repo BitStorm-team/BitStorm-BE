@@ -130,10 +130,10 @@ Route::prefix('experts')->group(function () {
     Route::get('/{expertId}/bookings/{bookingId}', [BookingController::class, 'getBookingByExpertIdAndBookingId']);
 })->middleware('activeAccount');
 
+Route::get('/liked-posts', [LikePostController::class, 'getLikedPosts']);
 // post
 Route::prefix('posts')->group(function () {
     // Likepost
-    Route::get('/{postId}/is-liked', [LikePostController::class, 'isLiked']);
     Route::post('/{postId}/like', [LikePostController::class, 'like']);
     Route::delete('/{postId}/unlike', [LikePostController::class, 'unlike']);
     // create a new post
