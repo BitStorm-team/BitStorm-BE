@@ -79,6 +79,7 @@ class ExpertDetailController extends Controller
         }
         // Bước 2:
 
+        $calendars = Calendar::where('expert_id', $id)->get();
         $feedback = DB::table('bookings')
             ->join('users', 'users.id', '=', 'bookings.user_id')
             ->join('feedback_experts', 'bookings.id', '=', 'feedback_experts.booking_id')
@@ -90,7 +91,7 @@ class ExpertDetailController extends Controller
         // Kết hợp thông tin từ $user và $expertDetail vào một mảng
         $data = [
             'expertDetail' => $expertDetail,
-            'schedules' => $expertDetail->calendars,
+            'schedules' => $calendars,
             'feedback' => $feedback
         ];
         // Trả về view với dữ liệu đã lấy được
