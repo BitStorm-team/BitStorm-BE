@@ -52,13 +52,9 @@ class LikePostController extends Controller
         try {
             $user = $this->getUser($request);
             $likePost = LikePost::where('user_id', $user->id)->where('post_id', $postId)->first();
+            $likePost->delete();
 
-            if ($likePost) {
-                $likePost->delete();
-                return response()->json(['success' => true, 'message' => 'Post unliked successfully'], 200);
-            }
-
-            return response()->json(['success' => false, 'message' => 'Like not found'], 404);
+            return response()->json(['success' => true], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

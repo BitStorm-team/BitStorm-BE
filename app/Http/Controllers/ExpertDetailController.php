@@ -70,20 +70,14 @@ class ExpertDetailController extends Controller
     public function getExpertDetail($id)
     {
         // Bước 1: Lấy chi tiết của chuyên gia dựa trên id
-        $expertDetail = ExpertDetail::where('user_id', $id)->first();
+        $expertDetail = ExpertDetail::where('user_id', $id)->with("calendars")->first();
         if (!$expertDetail) {
             return response()->json([
                 'success' => false,
                 'message' => 'Expert not found!',
             ], 404);
         }
-        // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
-        $user = $expertDetail->user;
-        // Step 3: Get all calendars that are booked and available in the present and future
-        $currentDateTime = date("Y-d-m H:i:s");
-        $calendars = Calendar::with(['expertDetail', 'expertDetail.user'])
-            ->where('start_time', '>=', $currentDateTime)
-            ->where('expert_id', $id)->get();
+        // Bước 2:
 
         $feedback = DB::table('bookings')
             ->join('users', 'users.id', '=', 'bookings.user_id')
@@ -96,7 +90,7 @@ class ExpertDetailController extends Controller
         // Kết hợp thông tin từ $user và $expertDetail vào một mảng
         $data = [
             'expertDetail' => $expertDetail,
-            'schedules' => $calendars,
+            'schedules' => $expertDetail->calendars,
             'feedback' => $feedback
         ];
         // Trả về view với dữ liệu đã lấy được
