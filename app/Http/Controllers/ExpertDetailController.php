@@ -70,21 +70,16 @@ class ExpertDetailController extends Controller
     public function getExpertDetail($id)
     {
         // Bước 1: Lấy chi tiết của chuyên gia dựa trên id
-        $expertDetail = ExpertDetail::where('user_id', $id)->first();
+        $expertDetail = ExpertDetail::where('user_id', $id)->with('user')->first();
         if (!$expertDetail) {
             return response()->json([
                 'success' => false,
                 'message' => 'Expert not found!',
             ], 404);
         }
-        // Bước 2: Truy cập thông tin của user thông qua mối quan hệ
-        $user = $expertDetail->user;
-        // Step 3: Get all calendars that are booked and available in the present and future
-        $currentDateTime = date("Y-d-m H:i:s");
-        $calendars = Calendar::where('expert_id', $id)
-            ->where('start_time', '>=', $currentDateTime)
-            ->get();
+        // Bước 2:
 
+        $calendars = Calendar::where('expert_id', $id)->get();
         $feedback = DB::table('bookings')
             ->join('users', 'users.id', '=', 'bookings.user_id')
             ->join('feedback_experts', 'bookings.id', '=', 'feedback_experts.booking_id')
@@ -259,7 +254,7 @@ class ExpertDetailController extends Controller
         $expert->phone_number = $request->input('phone_number');
         $expert->gender = $request->input('gender');
         $expert->date_of_birth = $request->input('date_of_birth');
-        $expert-> profile_picture = $request->input('profile_picture');
+        $expert->profile_picture = $request->input('profile_picture');
         $expert->status = 1;
         $expert->save();
 
@@ -296,7 +291,7 @@ class ExpertDetailController extends Controller
             $experts = User::where('role_id', 3)
                 ->where(function ($query) use ($searchTerm) {
                     $query->where('name', 'like', "%$searchTerm%")
-                          ->orWhere('email', 'like', "%$searchTerm%");
+                        ->orWhere('email', 'like', "%$searchTerm%");
                 })
                 ->with('expert')
                 ->get();
@@ -334,7 +329,7 @@ class ExpertDetailController extends Controller
             ->join('calendars', 'calendars.id', '=', 'bookings.calendar_id')
             ->join('users', 'users.id', '=', 'bookings.user_id')
             // ->join('expert_details', 'expert_details.user_id', '=', 'users.id')
-            ->select('calendars.*','users.*')
+            ->select('calendars.*', 'users.*')
             ->whereBetween('calendars.price', [$minPrice, $maxPrice])
             ->get();
         // Return the filtered results
@@ -346,6 +341,5 @@ class ExpertDetailController extends Controller
     function getOwnCalendars(Request $request, $id)
     {
         return "hello";
-
     }
 }

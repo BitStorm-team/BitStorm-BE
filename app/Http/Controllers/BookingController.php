@@ -129,15 +129,20 @@ class BookingController extends Controller
             ], 401);
         }
 
-        // generate a new google meet link here
-        $linkRoom = $this->generateRandomGoogleMeetLink();
-
         $booking = new Booking();
         $booking->user_id = $userID;
         $booking->calendar_id = $calendarID;
         $booking->note = $request->note;
         $booking->status = 'New';
-        $booking->link_room = 'https://meet.google.com/' . $linkRoom;
+
+        $link_rooms = ['rdf-ibfc-jia', 'ffa-bpkj-mwk', 'xse-abqk-zst', 'gid-ubfk-aze', 'iua-ipvh-gvg','ktk-meuw-zih'];
+
+        // Select a random room
+        $random_key = array_rand($link_rooms);
+        $link_room = $link_rooms[$random_key];
+
+        // Assign the randomly selected room to the booking link
+        $booking->link_room = 'https://meet.google.com/' . $link_room;
 
         if ($booking->save()) {
             $calendar->status = 0;
